@@ -15,10 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework import routers
 
 from backend import views
 
 urlpatterns = [
     path('', views.index, name='index'),
     path('admin/', admin.site.urls),
+    path('issue/random', views.randomIssueWithoutLabeling, name='index'),
+    path('issue/random/lime', views.randomIssue, name='index'),
 ]
