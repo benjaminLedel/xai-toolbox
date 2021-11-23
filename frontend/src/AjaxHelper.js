@@ -1,6 +1,6 @@
 import Helper from "./helper";
 
-let BASE = "http://127.0.0.1:8000/"
+let BASE = "http://127.0.0.1:8000/api"
 
 let API_ISSUE_RANDOM = "issue/random";
 let API_ISSUE_RANDOM_LIME = "issue/random/lime";

@@ -20,8 +20,8 @@ from rest_framework import routers
 from backend import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('admin/', admin.site.urls),
-    path('issue/random', views.randomIssueWithoutLabeling, name='index'),
-    path('issue/random/lime', views.randomIssue, name='index'),
+    path('api', views.index, name='index'),
+    path('api/admin/', admin.site.urls),
+    path('api/issue/random', views.randomIssueWithoutLabeling, name='index'),
+    path('api/issue/random/lime', views.randomIssue, name='index'),
 ]
