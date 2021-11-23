@@ -18,10 +18,13 @@ def randomIssueWithoutLabeling(request):
 
 def randomIssue(request):
     lime = LIMEEvaluation()
-    result = lime.get_example_lime()
+    result = lime.get_example_lime(
+    request.GET.get("bug_type",""))
 
     jsonResult = {
+        "class_names" : result[0].class_names,
         "lime" : result[0].as_list(),
-        "sample" : json.loads(result[1].to_json(default_handler=str))
+        "predict_proba" : result[0].predict_proba.astype(float).tolist(),
+        "sample" : json.loads(result[1].iloc[0].to_json(default_handler=str))
     }
     return HttpResponse(json.dumps(jsonResult), content_type="application/json")

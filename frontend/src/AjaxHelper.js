@@ -1,6 +1,6 @@
 import Helper from "./helper";
 
-let BASE = "http://127.0.0.1:8000/api"
+let BASE = "http://127.0.0.1:8000/api/"
 
 let API_ISSUE_RANDOM = "issue/random";
 let API_ISSUE_RANDOM_LIME = "issue/random/lime";
@@ -12,7 +12,7 @@ class AjaxHelperSingleton {
     }
 
     _get(endpoint, params = {}) {
-
+console.log(params)
         return fetch(BASE + endpoint + Helper.concatParams(params),
             {
                 method: "GET",
@@ -47,9 +47,9 @@ class AjaxHelperSingleton {
         return this._get(API_ISSUE_RANDOM)
     }
 
-    getRandomIssueLime()
+    getRandomIssueLime(bugType)
     {
-        return this._get(API_ISSUE_RANDOM_LIME)
+        return this._get(API_ISSUE_RANDOM_LIME,{"bug_type": bugType})
     }
 
 

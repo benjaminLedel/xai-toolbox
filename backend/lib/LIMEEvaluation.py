@@ -28,7 +28,7 @@ class LIMEEvaluation:
 
     class_names = ['no bug', 'bug']
 
-    def get_example_lime(self):
+    def get_example_lime(self, bug_type):
 
         issueRepo = IssueRepository('data/train_data_all.p')
         train_data = issueRepo.getData()
@@ -59,8 +59,16 @@ class LIMEEvaluation:
             predictions = approach.predict(approach.filter(test_df))
             print("Needed %s seconds..." % (time.time() - start_time))
 
-        sample = approach.filter(test_data[random.choice(self.test_projects)]).sample()
-        description = sample.iloc[0,0]
+        project = random.choice(self.test_projects)
+        sample = test_data[project].sample()
+
+        if bug_type == "bug":
+            sample = test_data[project][test_data[project]["classification"] == 1].sample()
+        if bug_type == "no_bug":
+            sample = test_data[project][test_data[project]["classification"] == 0].sample()
+
+        sampleFiltered = approach.filter(sample.copy())
+        description = sampleFiltered.iloc[0,0]
 
         explainer = LimeTextExplainer(class_names=self.class_names)
 
