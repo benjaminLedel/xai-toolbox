@@ -40,15 +40,6 @@ export default function Systemtest() {
     return (
         <div>
             <Row>
-                <h2>Random Issue</h2>
-                <Col>
-                    <button onClick={loadIssue} className={"btn btn-primary"}><FontAwesomeIcon icon={faSync}/> Load new
-                        issue
-                    </button>
-                    {issue ? <IssueViewer issue={issue}/> : "Lade Daten.."}
-                </Col>
-            </Row>
-            <Row>
                 <h2>Lime Visualisation</h2>
                 <Row>
                     <Col>
@@ -68,6 +59,16 @@ export default function Systemtest() {
                                                             lime={issueWithLabel.lime}/> : "Lade Daten.."}
                     </Col>
                 </Row>
+            </Row>
+
+            <Row>
+                <h2>Random Issue</h2>
+                <Col>
+                    <button onClick={loadIssue} className={"btn btn-primary"}><FontAwesomeIcon icon={faSync}/> Load new
+                        issue
+                    </button>
+                    {issue ? <IssueViewer issue={issue}/> : "Lade Daten.."}
+                </Col>
             </Row>
         </div>
     );
