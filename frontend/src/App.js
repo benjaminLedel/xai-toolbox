@@ -1,49 +1,35 @@
-import {Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
-import React from 'react';
+import React, {lazy, Suspense} from "react";
 import {
     BrowserRouter as Router,
-    Switch,
     Route,
-    Link
 } from "react-router-dom";
 import Home from "./pages/Home";
-import Systemtest from "./pages/Systemtest";
 import About from "./pages/About";
-import Train from "./pages/Train";
 import Login from "./pages/Login";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSignInAlt,faWind } from '@fortawesome/free-solid-svg-icons'
+import ProtectedRoute from "./ProtectedRoute";
+import AppGateway from "./AppGateway";
+import MainNavbar from "./MainNavbar";
+import {Container} from "react-bootstrap";
+import XAILoading from "./xAILoading";
+
+export const BASE_ROUTES =
+    {
+        ROOT: "/",
+        LOGIN: "/login",
+        TOOLS_EVALUATION: "/tools/evaluation",
+        TOOLS_TRAINING: "/tools/training",
+        TOOLS_SYSTEMTEST: "/tools/systemtest",
+    }
+
 
 class App extends React.Component {
 
     render() {
         return <Router>
             <div className="App">
-                <Navbar bg="light" expand="lg">
+                <MainNavbar>
                     <Container>
-                        <Link to="/" className={"navbar-brand"}><FontAwesomeIcon icon={faWind} /> xAI Toolkit</Link>
-                        <Navbar.Toggle aria-controls="basic-navbar-nav"/>
-                        <Navbar.Collapse id="basic-navbar-nav">
-                            <Nav className="me-auto">
-                                <Link to="/home" className={"nav-link"}>Dashboard</Link>
-                                <NavDropdown title="Toolkits" id="basic-nav-dropdown">
-                                    <Link to="/tools/evaluation" className={"dropdown-item"}>Evaluation</Link>
-                                    <Link to="/tools/training" className={"dropdown-item"}>Training</Link>
-                                    <NavDropdown.Divider/>
-                                    <Link to="/tools/systemtest" className={"dropdown-item"}>System Test</Link>
-                                </NavDropdown>
-                                <Link to="/about" className={"nav-link"}>About</Link>
-                            </Nav>
-                        </Navbar.Collapse>
-                        <Navbar.Collapse className="justify-content-end">
-                            <Navbar.Text>
-                                <Link to="/login" className={"nav-link"}><FontAwesomeIcon icon={faSignInAlt} /> Login</Link>
-                            </Navbar.Text>
-                        </Navbar.Collapse>
-                    </Container>
-                </Navbar>
-                <Container>
-                    <Switch>
+                    <Suspense fallback={<XAILoading/>}>
                         <Route exact path="/">
                             <Home/>
                         </Route>
@@ -56,15 +42,10 @@ class App extends React.Component {
                         <Route exact path="/login">
                             <Login/>
                         </Route>
-                        <Route path="/tools/systemtest">
-                            <Systemtest/>
-                        </Route>
-
-                        <Route path="/tools/training">
-                            <Train/>
-                        </Route>
-                    </Switch>
-                </Container>
+                        <ProtectedRoute path={BASE_ROUTES.ROOT} render={(props) => <AppGateway {...props}/>}/>
+                    </Suspense>
+                    </Container>
+                </MainNavbar>
 
             </div>
         </Router>

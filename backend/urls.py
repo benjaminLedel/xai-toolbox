@@ -22,8 +22,8 @@ from backend import views
 urlpatterns = [
     path('api', views.index, name='index'),
     path('api/admin/', admin.site.urls),
-    path('api/me/',views.me),
-    path('api/issue/random', views.randomIssueWithoutLabeling, name='index'),
-    path('api/issue/random/lime', views.randomIssue, name='index'),
+    path('api/me/', views.me, name="me"),
+    path('api/issue/random', views.randomIssueWithoutLabeling, name='random'),
+    path('api/issue/random/lime', views.randomIssue, name='randomLime'),
     path('api/auth/', include('djoser.urls.authtoken')),
 ]

@@ -18,6 +18,7 @@ export default function Login() {
             if(response.auth_token)
             {
                 localStorage.setItem("auth_token",response.auth_token)
+                window.location.reload();
             } else {
                 throw "E-Mail or Password is wrong";
             }

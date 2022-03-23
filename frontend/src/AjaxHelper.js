@@ -5,7 +5,7 @@ let BASE = "http://127.0.0.1:8000/api/"
 let API_ISSUE_RANDOM = "issue/random";
 let API_ISSUE_RANDOM_LIME = "issue/random/lime";
 let API_LOGIN = "auth/token/login";
-let API_ME = "me";
+let API_ME = "me/";
 
 class AjaxHelperSingleton {
 
@@ -58,7 +58,7 @@ class AjaxHelperSingleton {
     }
 
     me() {
-        return this._post(API_ME)
+        return this._get(API_ME)
     }
 }
 

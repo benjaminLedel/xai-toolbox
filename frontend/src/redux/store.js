@@ -1,5 +1,7 @@
 import { createStore } from 'redux'
 
+export const GENERAL_SET_CURRENT_USER = "GENERAL_SET_CURRENT_USER"
+
 const initialState = {
   user: null,
 }

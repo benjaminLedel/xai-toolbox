@@ -1,3 +1,5 @@
+import {NotificationManager} from 'react-notifications';
+
 class HelperClass {
 
     concatParams(params = {}) {
@@ -48,6 +50,30 @@ class HelperClass {
         document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
     }
 
+    getJWTToken()
+    {
+        return localStorage.getItem("auth_token")
+    }
+
+    fireErrorToast(title, content, delay=5000)
+    {
+        NotificationManager.error(content, title, delay, null);
+    }
+
+    fireWarningToast(title, content, delay=5000)
+    {
+        NotificationManager.warning(content, title, delay, null);
+    }
+
+    fireInfoToast(title, content, delay=5000)
+    {
+        NotificationManager.info(content, title, delay, null);
+    }
+
+    fireSuccessToast(title, content,delay=5000)
+    {
+        NotificationManager.success(content, title, delay, null);
+    }
 
 }
 
