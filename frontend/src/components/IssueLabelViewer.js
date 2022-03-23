@@ -37,12 +37,12 @@ export default function IssueLabelViewer(props) {
             {
                 label: props.classes[0],
                 data: props.lime?.map((word) => word[1] < 0 ? word[1] : 0),
-                backgroundColor: 'rgb(185,22,56)',
+                backgroundColor: 'rgb(34,87,201)',
             },
             {
                 label: props.classes[1],
                 data: props.lime?.map((word) => word[1] > 0 ? word[1] : 0),
-                backgroundColor: 'rgb(34,87,201)',
+                backgroundColor: 'rgb(185,22,56)',
             }
         ],
     };
@@ -59,12 +59,19 @@ export default function IssueLabelViewer(props) {
 
     const classIndex = props.predict_proba.indexOf(Math.max(...props.predict_proba));
 
+    const max = props.lime[0][1];
+    const faktor = 1 / max;
+
+
     // replace in the data
     props.lime?.forEach(function (word) {
-        const cssClass = word[1] < 0 ? 'marker-green' : 'marker-yellow';
-        text = text.replace(new RegExp("(?:^|\\W)" + word[0] + "(?:$|\\W)","gm"), ' <mark class="' + cssClass + '">' + word[0] + '</mark> ')
+        const cssClass = word[1] < 0 ? 'marker-yellow' : 'marker-green';
+        text = text.replace(new RegExp("(?:^|\\W)" + word[0] + "(?:$|\\W)", "gm"), ' </div><div class="marker-view" style="background-color: ' + (cssClass !== "marker-yellow" ? "rgb(185,22,56," + Math.abs(faktor * word[1]) + ")" : "rgb(34,87,201," + Math.abs(faktor * word[1]) + ")" ) + '; display: inline; margin: 2px;">' + word[0] + '</div><div style="display: inline;"> ')
     })
+    text = '<div style="display: inline;">' + text + '</div>';
+    text = text.replace('<div style="display: inline;"> </div>','')
 
+    console.log(text)
     console.log(text)
 
     return <Container className={"mt-4 mb-4"}>
@@ -75,9 +82,10 @@ export default function IssueLabelViewer(props) {
                 }
             </Col>
             <Col xs={6}>
-                    {withLabel ? <p>Predicted as: <b
-                    style={{color: classIndex === 0 ? 'rgb(185,22,56)' : 'rgb(34,87,201)'}}>{props.classes[classIndex]}</b> <br></br>
-                    Score: <b>{ Math.max(...props.predict_proba) }</b>
+                {withLabel ? <p>Predicted as: <b
+                    style={{color: classIndex === 0 ? 'rgb(34,87,201)' : 'rgb(185,22,56)'}}>{props.classes[classIndex]}</b>
+                    <br></br>
+                    Score: <b>{Math.max(...props.predict_proba)}</b>
                 </p> : <></>}
             </Col>
             <Col className={"mt-2"} xs={12}>
@@ -86,8 +94,9 @@ export default function IssueLabelViewer(props) {
                     config={{
                         toolbar: editable ? ['highlight:yellowMarker', 'highlight:greenMarker', 'removeHighlight',] : [],
                         restrictedEditing: {
-                            allowedCommands: editable ? ['highlight', 'highlight:yellowMarker', 'highlight:greenMarker','removeHighlight'] : [],
+                            allowedCommands: editable ? ['highlight', 'highlight:yellowMarker', 'highlight:greenMarker', 'removeHighlight'] : [],
                         },
+                        doNotAutoparagraph: true,
                         highlight: {
                             options: [
                                 {
@@ -106,13 +115,23 @@ export default function IssueLabelViewer(props) {
                                 },
                             ]
                         },
+                        htmlSupport: {
+                            allow: [{
+                                name: 'div',
+                                styles: true,
+                                classes: true
+                            }]
+                        }
                     }}
                     data={text}
                     onReady={(editor) => {
-                        editor.plugins.get('RestrictedEditingModeEditing').enableCommand('highlight');
-                        editor.model.document.selection.on('change:range', (eventInfo, directChange) => {
-                            editor.execute('highlight', {value: 'yellowMarker'});
-                        });
+                        if(props.editable) {
+                            editor.plugins.get('RestrictedEditingModeEditing').enableCommand('highlight');
+
+                            editor.model.document.selection.on('change:range', (eventInfo, directChange) => {
+                                editor.execute('highlight', {value: 'yellowMarker'});
+                            });
+                        }
                     }}
                 />
             </Col>

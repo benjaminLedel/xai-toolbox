@@ -9,6 +9,10 @@ import {
 import Home from "./pages/Home";
 import Systemtest from "./pages/Systemtest";
 import About from "./pages/About";
+import Train from "./pages/Train";
+import Login from "./pages/Login";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSignInAlt,faWind } from '@fortawesome/free-solid-svg-icons'
 
 class App extends React.Component {
 
@@ -17,7 +21,7 @@ class App extends React.Component {
             <div className="App">
                 <Navbar bg="light" expand="lg">
                     <Container>
-                        <Link to="/" className={"navbar-brand"}>xAI Toolkit</Link>
+                        <Link to="/" className={"navbar-brand"}><FontAwesomeIcon icon={faWind} /> xAI Toolkit</Link>
                         <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                         <Navbar.Collapse id="basic-navbar-nav">
                             <Nav className="me-auto">
@@ -31,21 +35,33 @@ class App extends React.Component {
                                 <Link to="/about" className={"nav-link"}>About</Link>
                             </Nav>
                         </Navbar.Collapse>
+                        <Navbar.Collapse className="justify-content-end">
+                            <Navbar.Text>
+                                <Link to="/login" className={"nav-link"}><FontAwesomeIcon icon={faSignInAlt} /> Login</Link>
+                            </Navbar.Text>
+                        </Navbar.Collapse>
                     </Container>
                 </Navbar>
                 <Container>
                     <Switch>
                         <Route exact path="/">
-                            <Systemtest/>
+                            <Home/>
                         </Route>
                         <Route exact path="/home">
                             <Home/>
                         </Route>
-                         <Route exact path="/about">
+                        <Route exact path="/about">
                             <About/>
+                        </Route>
+                        <Route exact path="/login">
+                            <Login/>
                         </Route>
                         <Route path="/tools/systemtest">
                             <Systemtest/>
+                        </Route>
+
+                        <Route path="/tools/training">
+                            <Train/>
                         </Route>
                     </Switch>
                 </Container>

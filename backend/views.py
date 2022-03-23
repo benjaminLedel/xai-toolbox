@@ -11,6 +11,10 @@ from backend.lib.LIMEEvaluation import LIMEEvaluation
 def index(request):
     return HttpResponse("Hello, world. I´m the backend.")
 
+
+def me(request):
+    return HttpResponse(json.dumps(request.user))
+
 def randomIssueWithoutLabeling(request):
     issueRepository = IssueRepository('data/test_data_all.p')
     issue = issueRepository.getRandomIssue().to_json(default_handler=str)

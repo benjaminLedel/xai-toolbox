@@ -1,1 +1,1 @@
-(function(o){const n=o["bg"]=o["bg"]||{};n.dictionary=Object.assign(n.dictionary||{},{"%0 of %1":"",Redo:"Повтори","Show more items":"",Undo:"Отмени"});n.getPluralForm=function(o){return o!=1}})(window.CKEDITOR_TRANSLATIONS||(window.CKEDITOR_TRANSLATIONS={}));
+(function(n){const o=n["bg"]=n["bg"]||{};o.dictionary=Object.assign(o.dictionary||{},{"%0 of %1":"",Cancel:"Отказ",Redo:"Повтори","Show more items":"",Undo:"Отмени"});o.getPluralForm=function(n){return n!=1}})(window.CKEDITOR_TRANSLATIONS||(window.CKEDITOR_TRANSLATIONS={}));

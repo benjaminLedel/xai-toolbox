@@ -4,15 +4,16 @@ let BASE = "http://127.0.0.1:8000/api/"
 
 let API_ISSUE_RANDOM = "issue/random";
 let API_ISSUE_RANDOM_LIME = "issue/random/lime";
+let API_LOGIN = "auth/token/login";
+let API_ME = "me";
 
 class AjaxHelperSingleton {
 
     _getAuthHeaderObj() {
-        return {'Authorization': "Bearer "}
+        return {'Authorization': "Bearer " + localStorage.getItem("auth_token")}
     }
 
     _get(endpoint, params = {}) {
-console.log(params)
         return fetch(BASE + endpoint + Helper.concatParams(params),
             {
                 method: "GET",
@@ -27,7 +28,6 @@ console.log(params)
     }
 
     _post(endpoint, payload = {}) {
-
         return fetch(BASE + endpoint,
             {
                 headers:
@@ -52,7 +52,14 @@ console.log(params)
         return this._get(API_ISSUE_RANDOM_LIME,{"bug_type": bugType})
     }
 
+    login(email, password)
+    {
+        return this._post(API_LOGIN,{ username: email, password: password })
+    }
 
+    me() {
+        return this._post(API_ME)
+    }
 }
 
 const AjaxHelper = new AjaxHelperSingleton();
