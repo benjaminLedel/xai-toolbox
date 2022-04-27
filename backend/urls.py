@@ -19,6 +19,11 @@ from rest_framework import routers
 
 from backend import views
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 urlpatterns = [
     path('api', views.index, name='index'),
     path('api/admin/', admin.site.urls),
@@ -26,5 +31,6 @@ urlpatterns = [
     path('api/issue/random', views.randomIssueWithoutLabeling, name='random'),
     path('api/issue/random/lime', views.randomIssueLIME, name='randomLime'),
     path('api/issue/random/shap', views.randomIssueSHAP, name='randomLime'),
-    path('api/auth/', include('djoser.urls.authtoken')),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

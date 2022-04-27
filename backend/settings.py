@@ -41,8 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     "djoser",
     "corsheaders",
-    "rest_framework_simplejwt",
-    "rest_framework_simplejwt.token_blacklist",
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +53,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'backend.middleware.JWTAuthenticationInMiddleware'
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -139,13 +137,9 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ]
+        "rest_framework.authentication.TokenAuthentication",
+    ),
 }

@@ -3,20 +3,26 @@ import json
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.core.serializers import serialize
+from django.utils.decorators import decorator_from_middleware
 
 from backend.lib.IssueRepository import IssueRepository
 from backend.lib.LIMEEvaluation import LIMEEvaluation
 from backend.lib.SHAPEvaluation import SHAPEvaluation
 
+from rest_framework_simplejwt import authentication
+
+from backend.middleware import JWTMiddleware
+
 
 def index(request):
     return HttpResponse("Hello, world. I´m the backend.")
 
-
+@decorator_from_middleware(JWTMiddleware)
 def me(request):
     current_user = request.user
-    print(current_user.id)
-    return HttpResponse("test")
+    if not current_user:
+        return HttpResponse(json.dumps({}))
+    return HttpResponse(json.dumps({"email": current_user.email, "id": current_user.id}))
 
 def randomIssueWithoutLabeling(request):
     issueRepository = IssueRepository('data/test_data_all.p')

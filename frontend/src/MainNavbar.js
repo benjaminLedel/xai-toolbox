@@ -8,6 +8,7 @@ import {connect} from "react-redux";
 class MainNavbar extends Component {
 
     render() {
+        console.log(this.props.store.user)
         return (
             <div>
                 <Navbar bg="light" expand="lg">
@@ -30,7 +31,7 @@ class MainNavbar extends Component {
 
                             <Navbar.Text>
                                 <Link to="/login" className={"nav-link"}><FontAwesomeIcon
-                                    icon={faSignInAlt}/> Login</Link>
+                                    icon={faSignInAlt}/> Login {this.props.store.user}</Link>
                             </Navbar.Text>
                         </Navbar.Collapse>
                     </Container>

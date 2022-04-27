@@ -15,9 +15,9 @@ export default function Login() {
         setError(null)
         AjaxHelper.login(email,password).then(function (response) {
             console.log(response)
-            if(response.auth_token)
+            if(response.access)
             {
-                localStorage.setItem("auth_token",response.auth_token)
+                localStorage.setItem("auth_token",response.access)
                 window.location.reload();
             } else {
                 throw "E-Mail or Password is wrong";

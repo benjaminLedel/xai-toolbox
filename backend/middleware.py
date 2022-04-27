@@ -1,28 +1,18 @@
-from django.contrib.auth.middleware import get_user
-from django.utils.functional import SimpleLazyObject
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+import rest_framework_simplejwt
+from rest_framework_simplejwt import authentication
 
 
-class JWTAuthenticationInMiddleware(object):
+class JWTMiddleware():
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        request.user = SimpleLazyObject(lambda:self.__class__.get_jwt_user(request))
-        return self.get_response(request)
+        response = self.get_response(request)
+        return response
 
-    @staticmethod
-    def get_jwt_user(request):
-        # Already authenticated
-        user = get_user(request)
-        if user.is_authenticated:
-            return user
-
-        # Do JTW authentication
-        jwt_authentication = JSONWebTokenAuthentication()
-
-        authenticated = jwt_authentication.authenticate(request)
-        if authenticated:
-            user, jwt = authenticated
-
-        return user
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        try:
+            request.user = authentication.JWTAuthentication().authenticate(request)[0]  # Manually authenticate the token
+            print(request.user)
+        except rest_framework_simplejwt.exceptions.InvalidToken:
+            request.user = None

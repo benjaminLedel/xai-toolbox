@@ -4,13 +4,13 @@ let BASE = "http://127.0.0.1:8000/api/"
 
 let API_ISSUE_RANDOM = "issue/random";
 let API_ISSUE_RANDOM_LIME = "issue/random/lime";
-let API_LOGIN = "auth/token/login";
+let API_LOGIN = "token/";
 let API_ME = "me/";
 
 class AjaxHelperSingleton {
 
     _getAuthHeaderObj() {
-        return {'Authorization': "Token " + localStorage.getItem("auth_token")}
+        return {'Authorization': "Bearer " + localStorage.getItem("auth_token")}
     }
 
     _get(endpoint, params = {}) {
@@ -54,7 +54,17 @@ class AjaxHelperSingleton {
 
     login(email, password)
     {
-        return this._post(API_LOGIN,{ username: email, password: password })
+        return fetch(BASE + API_LOGIN,
+            {
+                headers:
+                    {
+                        'Accept': '*/*',
+                        'Content-Type': 'application/json',
+                    },
+                method: "POST",
+                body: JSON.stringify({ username: email, password: password })
+            })
+            .then(resp => resp.json());
     }
 
     me() {
