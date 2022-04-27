@@ -10,7 +10,7 @@ let API_ME = "me/";
 class AjaxHelperSingleton {
 
     _getAuthHeaderObj() {
-        return {'Authorization': "Bearer " + localStorage.getItem("auth_token")}
+        return {'Authorization': "Token " + localStorage.getItem("auth_token")}
     }
 
     _get(endpoint, params = {}) {

@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/admin/', admin.site.urls),
     path('api/me/', views.me, name="me"),
     path('api/issue/random', views.randomIssueWithoutLabeling, name='random'),
-    path('api/issue/random/lime', views.randomIssue, name='randomLime'),
+    path('api/issue/random/lime', views.randomIssueLIME, name='randomLime'),
+    path('api/issue/random/shap', views.randomIssueSHAP, name='randomLime'),
     path('api/auth/', include('djoser.urls.authtoken')),
 ]
