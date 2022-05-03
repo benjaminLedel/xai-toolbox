@@ -3,7 +3,7 @@ import "./loadingStyles.css";
 
 export default function XAILoading() {
   return (
-      <div className="d-flex justify-content-center" style={{marginTop: "250px"}}>
+      <div className="d-flex justify-content-center" style={{marginTop: "250px", height: "300px"}}>
 
           <div className="h1Container">
 

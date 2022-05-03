@@ -1,14 +1,16 @@
 import React from "react";
 import {Row} from "react-bootstrap";
 import { useSelector } from 'react-redux'
+import XAILoading from "../xAILoading";
 
 export default function Home() {
 
   const user = useSelector((state) => state.user)
 
   if(user == null)
-      return  <div className={"mt-2"}>
-      <h2>Welcome to xAI Toolbox</h2>
+      return  <div className={"mt-2 text-center"}>
+          <XAILoading/>
+      <h1>Welcome to xAI Toolbox</h1>
           </div>
 
   return (
