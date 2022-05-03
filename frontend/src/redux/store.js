@@ -7,6 +7,9 @@ const initialState = {
 }
 
 const reducer = (state = initialState, action) => {
+  console.log(action.type)
+    if (action.type === GENERAL_SET_CURRENT_USER)
+        return {...state, user: action.payload}
   return state
 }
 

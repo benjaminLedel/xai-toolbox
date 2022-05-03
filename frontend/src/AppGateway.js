@@ -51,11 +51,10 @@ class AppGatewayReact extends Component {
     initApp() {
         AjaxHelper.me() // get the current clouduser
             .then(resp => {
-                if (resp.payload && resp.payload) {
-                    this.props.updateCurrentUser(resp.payload)
+                if (resp) {
+                    this.props.updateCurrentUser(resp)
                 } else
                     throw new Error("Server Error")
-                return AjaxHelper.me()
             }).catch(err => {
                 Helper.fireErrorToast("Fehler", "Kritischer Server Fehler." + err.message)
             })

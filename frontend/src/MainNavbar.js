@@ -2,13 +2,12 @@ import React, {Component} from "react";
 import {Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSignInAlt, faWind} from "@fortawesome/free-solid-svg-icons";
+import {faSignInAlt, faUser, faWind} from "@fortawesome/free-solid-svg-icons";
 import {connect} from "react-redux";
 
 class MainNavbar extends Component {
 
     render() {
-        console.log(this.props.store.user)
         return (
             <div>
                 <Navbar bg="light" expand="lg">
@@ -29,10 +28,15 @@ class MainNavbar extends Component {
                         </Navbar.Collapse>
                         <Navbar.Collapse className="justify-content-end">
 
-                            <Navbar.Text>
+                            { this.props.store.user ?
+                                 <Navbar.Text>
                                 <Link to="/login" className={"nav-link"}><FontAwesomeIcon
-                                    icon={faSignInAlt}/> Login {this.props.store.user}</Link>
+                                    icon={faUser}/> {this.props.store.user.email}</Link>
+                            </Navbar.Text>:  <Navbar.Text>
+                                <Link to="/login" className={"nav-link"}><FontAwesomeIcon
+                                    icon={faSignInAlt}/> Login</Link>
                             </Navbar.Text>
+                            }
                         </Navbar.Collapse>
                     </Container>
                 </Navbar>
