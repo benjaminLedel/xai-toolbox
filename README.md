@@ -2,7 +2,7 @@
 The xAI Toolbox uses Django as a backend framework and React as a frontend framework. 
 The toolbox displays issues from software repositories of SmartSHARK 
 
-![Training process](images/snippet1.png?raw=true "Training process")
+![Training process](images/snippet1.PNG?raw=true "Training process")
 
 ## Local development
 The following guide will help you to setup the project on your local device.
