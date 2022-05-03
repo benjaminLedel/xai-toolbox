@@ -1,4 +1,5 @@
 import Helper from "./helper";
+import EventManager from "./EventManager";
 
 let BASE = "http://127.0.0.1:8000/api/"
 
@@ -65,6 +66,9 @@ class AjaxHelperSingleton {
                 body: JSON.stringify({ username: email, password: password })
             })
             .then(resp => resp.json());
+    }
+
+     logout() {
     }
 
     me() {

@@ -1,9 +1,9 @@
 import React from "react";
 
-export default function Evaulation() {
+export default function Evaluation() {
   return (
     <div>
-      <h2>About</h2>
+      <h2>Evaluation</h2>
 
     </div>
   );

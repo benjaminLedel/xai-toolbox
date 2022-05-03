@@ -1,10 +1,19 @@
 import React from "react";
 import {Row} from "react-bootstrap";
+import { useSelector } from 'react-redux'
 
 export default function Home() {
+
+  const user = useSelector((state) => state.user)
+
+  if(user == null)
+      return  <div className={"mt-2"}>
+      <h2>Willkommen zum xAI Toolbox</h2>
+          </div>
+
   return (
-    <div>
-      <h2>Home</h2>
+    <div className={"mt-2"}>
+      <h2>Dashboard von {user?.email}</h2>
 
         <Row>
             <div className="card text-white bg-primary mb-3">

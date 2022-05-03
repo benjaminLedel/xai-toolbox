@@ -53,7 +53,7 @@ class ProtectedRoute extends Component {
     setCurrentAuthenticationState() {
         //Fresh start; Consider currentUserObject here, since the cookie is not set fast enough
         if (this.state.isAuthenticated === null
-            && this.props.store && this.props.store.currentCloudUser && this.props.store.currentCloudUser.id)
+            && this.props.store && this.props.store.user && this.props.store.user.email)
             this.setState({isAuthenticated: true})
 
         //Later on, only check whether the cookie is set

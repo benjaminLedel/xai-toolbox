@@ -11,6 +11,8 @@ import AjaxHelper from "./AjaxHelper";
 import Helper from "./helper";
 import Train from "./pages/Train";
 import XAILoading from "./xAILoading";
+import Evaluation from "./pages/Evaluation";
+import Systemtest from "./pages/Systemtest";
 
 class AppGatewayReact extends Component {
 
@@ -52,7 +54,10 @@ class AppGatewayReact extends Component {
         AjaxHelper.me() // get the current clouduser
             .then(resp => {
                 if (resp) {
-                    this.props.updateCurrentUser(resp)
+                    if(resp.email == null)
+                        this.props.updateCurrentUser(null)
+                    else
+                        this.props.updateCurrentUser(resp)
                 } else
                     throw new Error("Server Error")
             }).catch(err => {
@@ -67,9 +72,14 @@ class AppGatewayReact extends Component {
     routing() {
         return <Switch>
                 <ProtectedRoute path={BASE_ROUTES.TOOLS_TRAINING} render={(props) => <Train {...props}/>} />
+                <ProtectedRoute path={BASE_ROUTES.TOOLS_EVALUATION} render={(props) => <Evaluation {...props}/>} />
+                <ProtectedRoute path={BASE_ROUTES.TOOLS_SYSTEMTEST} render={(props) => <Systemtest {...props}/>} />
             </Switch>
     }
 
+    logoutEventHandler() {
+        //this.setState({shallRedirectToLogin: true, isComponentReady :false})
+    }
 
     render() {
         return <div>
