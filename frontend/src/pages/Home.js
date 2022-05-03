@@ -8,12 +8,12 @@ export default function Home() {
 
   if(user == null)
       return  <div className={"mt-2"}>
-      <h2>Willkommen zum xAI Toolbox</h2>
+      <h2>Welcome to xAI Toolbox</h2>
           </div>
 
   return (
     <div className={"mt-2"}>
-      <h2>Dashboard von {user?.email}</h2>
+      <h2>Dashboard from {user?.email}</h2>
 
         <Row>
             <div className="card text-white bg-primary mb-3">
