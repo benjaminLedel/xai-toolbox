@@ -5,6 +5,7 @@ let BASE = "http://127.0.0.1:8000/api/"
 
 let API_ISSUE_RANDOM = "issue/random";
 let API_ISSUE_RANDOM_LIME = "issue/random/lime";
+let API_ISSUE_RANDOM_SHAP = "issue/random/shap";
 let API_LOGIN = "token/";
 let API_ME = "me/";
 
@@ -51,6 +52,11 @@ class AjaxHelperSingleton {
     getRandomIssueLime(bugType)
     {
         return this._get(API_ISSUE_RANDOM_LIME,{"bug_type": bugType})
+    }
+
+    getRandomIssueShap(bugType)
+    {
+        return this._get(API_ISSUE_RANDOM_SHAP,{"bug_type": bugType})
     }
 
     login(email, password)

@@ -72,7 +72,6 @@ export default function IssueLabelViewer(props) {
     text = text.replace('<div style="display: inline;"> </div>','')
 
     console.log(text)
-    console.log(text)
 
     return <Container className={"mt-4 mb-4"}>
         <Row>

@@ -19,6 +19,14 @@ export default function Home() {
 
         <Row>
             <div className="card text-white bg-primary mb-3">
+                <div className="card-header">Issues</div>
+                <div className="card-body">
+                    <h5 className="card-title">Primary card title</h5>
+                    <p className="card-text">Number of issues that are currently in the database</p>
+                </div>
+            </div>
+
+             <div className="card text-white bg-primary mb-3">
                 <div className="card-header">Header</div>
                 <div className="card-body">
                     <h5 className="card-title">Primary card title</h5>

@@ -25,6 +25,13 @@ export default function Systemtest() {
         });
     }
 
+     const loadShapData = () => {
+        setIssueWithLabel(null)
+        AjaxHelper.getRandomIssueShap(bugType).then(function (response) {
+            setIssueWithLabel(response);
+        });
+    }
+
     const loadIssue = () => {
         setIssue(null)
         AjaxHelper.getRandomIssue().then(function (response) {
@@ -34,7 +41,7 @@ export default function Systemtest() {
     }
 
     useEffect(() => {
-        loadLimeData()
+        loadShapData()
     }, [bugType])
 
     return (
@@ -56,7 +63,7 @@ export default function Systemtest() {
                         {issueWithLabel ? <IssueLabelViewer predict_proba={issueWithLabel.predict_proba}
                                                             classes={issueWithLabel.class_names}
                                                             issue={issueWithLabel.sample}
-                                                            lime={issueWithLabel.lime}/> : "Lade Daten.."}
+                                                            lime={issueWithLabel.xai_toolkit_response}/> : "Lade Daten.."}
                     </Col>
                 </Row>
             </Row>
