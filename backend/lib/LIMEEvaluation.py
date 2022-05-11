@@ -7,9 +7,18 @@ import time
 import pandas as pd
 from django.conf import settings
 from lime.lime_text import LimeTextExplainer
+import json
+import random
+import numpy as np
+import torch
+
+import transformers
+from transformers import InputExample
 
 from backend.icb.approaches.herbold_modified import Herbold2020_FastText_Modified
 from backend.lib.IssueRepository import IssueRepository
+from backend.lib.SHAPEvaluation import NumpyEncoder
+from backend.models import XAICache
 
 
 class LIMEEvaluation:
@@ -74,3 +83,44 @@ class LIMEEvaluation:
 
         exp = explainer.explain_instance(description, approach.predict_proba_plain, num_features=10)
         return exp, sample
+
+
+    def calculate_lime(self):
+        testIssueRepo = IssueRepository('data/test_data_all.p')
+        test_data = testIssueRepo.getData()
+
+        seed = 42
+
+        random.seed(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        transformers.set_seed(seed)
+
+        MODEL_PATH = 'backend/models/seBERT/'
+
+        model = transformers.BertForSequenceClassification.from_pretrained(MODEL_PATH, num_labels=3)
+        tokenizer = transformers.BertTokenizer.from_pretrained(MODEL_PATH, truncation=True, max_length=128,
+                                                               paddding=True)
+
+        # load a transformers pipeline model
+        pipe = transformers.pipeline('sentiment-analysis',
+                                     return_all_scores=True, model=model, tokenizer=tokenizer)
+
+        for project in self.test_projects:
+            print("Project " + project)
+            for index, issue in test_data[project].iterrows():
+                print("(" + str(index) + "/" + str(test_data[project].size) + ")")
+                explainer = LimeTextExplainer(class_names=self.class_names)
+                exp = explainer.explain_instance(issue["title"] + " " + issue["description"], pipe, num_features=10)
+
+                cache = XAICache.objects.create(issue_id=index,
+                                                project=project,
+                                                xai_algorithm="lime",
+                                                algorithm="seBERT",
+                                                viewData=json.dumps(exp,
+                                                                    cls=NumpyEncoder))
+                cache.save()
+                print(exp)
