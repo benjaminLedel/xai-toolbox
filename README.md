@@ -5,17 +5,17 @@ The toolbox displays issues from software repositories of SmartSHARK
 ![Training process](images/snippet1.PNG?raw=true "Training process")
 
 ## Local development
-The following guide will help you to setup the project on your local device.
+The following guide will help you to set up the project on your local device.
 ### Requirements
 Requirements and how to get them with Ubuntu 20.04 LTS.
-#### Python 3.6
+#### Python 3.9
 
 ```bash
-add-apt-repository ppa:jonathonf/python-3.6
-apt-get update
-apt-get install python3.6
-apt-get install python3.6-dev
-apt-get install python3.6-venv
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install python3.9
+sudo apt-get install python3.9-dev
+sudo apt-get install python3.9-venv
 ```
 
 #### NPM
@@ -29,13 +29,13 @@ sudo apt install nodejs npm
 
 #### Installation Backend
 The backend assumes that a MySQL database is already existing for xAI Toolkit (can be empty).
-If that is not the case create a database with your favorite tool before running migrate. Otherwise you can use the sqlite database  (not recommend).
+If that is not the case create a database with your favorite tool before running migrate. Otherwise, you can use the SQLite database  (not recommended).
 
 ```bash
-apt-get install libmysqlclient-dev
+sudo apt-get install libmysqlclient-dev
 git clone https://github.com/benjaminLedel/xai-toolbox.git
-cd /srv/www/xaitoolkit/
-python3.6 -m venv .
+cd xai-toolbox
+python3.9 -m venv .
 source bin/activate
 pip install -r requirements.txt
 # change database credentials for MySQL DB and the secret key
@@ -68,4 +68,3 @@ run frontend in dev mode
 cd /srv/www/xaitoolkit/frontend
 npm run start
 ```
-
