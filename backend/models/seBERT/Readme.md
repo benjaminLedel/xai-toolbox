@@ -1,0 +1,1 @@
+Add here the files from https://smartshark2.informatik.uni-goettingen.de/sebert/issue_type_model.tar

@@ -25,12 +25,12 @@ ChartJS.register(
 );
 
 export default function IssueLabelViewer(props) {
-    var text = props.issue?.description?.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    var text = props.text?.replace(/(?:\r\n|\r|\n)/g, '<br>');
     const withLabel = props.withLabel ? props.withLabel : true;
     const withBarChart = props.withBarChart ? props.withBarChart : true;
     const editable = props.editable ? props.editable : false;
 
-    const labels = props.lime?.map((word) => word[0]);
+    const labels = props.xai_toolkit_response?.map((word) => word[0]);
     const data = {
         labels,
         datasets: [
@@ -59,14 +59,15 @@ export default function IssueLabelViewer(props) {
 
     const classIndex = props.predict_proba.indexOf(Math.max(...props.predict_proba));
 
-    const max = props.lime[0][1];
+    const max = props.xai_toolkit_response[0][1];
     const faktor = 1 / max;
 
 
     // replace in the data
-    props.lime?.forEach(function (word) {
+    props.xai_toolkit_response?.forEach(function (word) {
+        console.log(word)
         const cssClass = word[1] < 0 ? 'marker-yellow' : 'marker-green';
-        text = text.replace(new RegExp("(?:^|\\W)" + word[0] + "(?:$|\\W)", "gm"), ' </div><div class="marker-view" style="background-color: ' + (cssClass !== "marker-yellow" ? "rgb(185,22,56," + Math.abs(faktor * word[1]) + ")" : "rgb(34,87,201," + Math.abs(faktor * word[1]) + ")" ) + '; display: inline; margin: 2px;">' + word[0] + '</div><div style="display: inline;"> ')
+        text = text.replace(new RegExp("(?:^|\\W)" + word[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + "(?:$|\\W)", "gm"), ' </div><div class="marker-view" style="background-color: ' + (cssClass !== "marker-yellow" ? "rgb(185,22,56," + Math.abs(faktor * word[1]) + ")" : "rgb(34,87,201," + Math.abs(faktor * word[1]) + ")" ) + '; display: inline; margin: 2px;">' + word[0] + '</div><div style="display: inline;"> ')
     })
     text = '<div style="display: inline;">' + text + '</div>';
     text = text.replace('<div style="display: inline;"> </div>','')

@@ -62,8 +62,8 @@ export default function Systemtest() {
                     <Col>
                         {issueWithLabel ? <IssueLabelViewer predict_proba={issueWithLabel.predict_proba}
                                                             classes={issueWithLabel.class_names}
-                                                            issue={issueWithLabel.sample}
-                                                            lime={issueWithLabel.xai_toolkit_response}/> : "Lade Daten.."}
+                                                            text={issueWithLabel.sample}
+                                                            xai_toolkit_response={issueWithLabel.xai_toolkit_response}/> : "Lade Daten.."}
                     </Col>
                 </Row>
             </Row>

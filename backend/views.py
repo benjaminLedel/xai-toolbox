@@ -35,20 +35,22 @@ def randomIssueLIME(request):
     request.GET.get("bug_type",""))
 
     jsonResult = {
-        "class_names" : result[0].class_names,
-        "xai_toolkit_response" : result[0].as_list(),
-        "predict_proba" : result[0].predict_proba.astype(float).tolist(),
-        "sample" : json.loads(result[1].iloc[0].to_json(default_handler=str))
+        "class_names" : result[2],
+        "xai_toolkit_response" : result[0],
+        "predict_proba" : [0,2],
+        "sample" : result[1]
     }
     return HttpResponse(json.dumps(jsonResult), content_type="application/json")
 
 def randomIssueSHAP(request):
-    lime = SHAPEvaluation()
-    result = lime.get_example_shap(
+    shap = SHAPEvaluation()
+    result = shap.get_example_shap(
     request.GET.get("bug_type",""))
 
     jsonResult = {
-        "xai_toolkit_response" : result,
-        "sample" : json.loads(result[1].iloc[0].to_json(default_handler=str))
+        "class_names": result[2],
+        "xai_toolkit_response": result[0],
+        "predict_proba": [0, 2],
+        "sample": result[1]
     }
     return HttpResponse(json.dumps(jsonResult), content_type="application/json")
