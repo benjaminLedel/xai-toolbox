@@ -54,7 +54,7 @@ class LIMEEvaluation:
 
         MODEL_PATH = 'backend/models/seBERT/'
 
-        model = transformers.BertForSequenceClassification.from_pretrained(MODEL_PATH, num_labels=3)
+        model = transformers.BertForSequenceClassification.from_pretrained(MODEL_PATH, num_labels=2)
         tokenizer = transformers.BertTokenizer.from_pretrained(MODEL_PATH, truncation=True, max_length=128,
                                                                paddding=True)
 
@@ -66,7 +66,7 @@ class LIMEEvaluation:
             output = pipe(x)
             outputFinal = []
             for d in output:
-                outputFinal.append([d[0]["score"], d[1]["score"], d[2]["score"]])
+                outputFinal.append([d[0]["score"], d[1]["score"]])
             return np.array(outputFinal)
 
         count = Issue.objects.count()
