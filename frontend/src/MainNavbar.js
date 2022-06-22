@@ -27,8 +27,7 @@ class MainNavbar extends Component {
                                 <Nav className="me-auto">
                                     <Link to="/home" className={"nav-link"}>Dashboard</Link>
                                     <NavDropdown title="Toolbox" id="basic-nav-dropdown">
-                                        <Link to="/tools/evaluation" className={"dropdown-item"}>Evaluation</Link>
-                                        <Link to="/tools/training" className={"dropdown-item"}>Training</Link>
+                                        <Link to="/tools/evaluation" className={"dropdown-item"}>Start labeling</Link>
                                         <NavDropdown.Divider/>
                                         <Link to="/tools/systemtest" className={"dropdown-item"}>System Test</Link>
                                     </NavDropdown>
