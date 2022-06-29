@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from "react";
-import {Col, Row, Table, Form, Card} from "react-bootstrap";
+import {Col, Row, Table, Form, Card, Alert} from "react-bootstrap";
 import IssueLabelViewer from "../components/IssueLabelViewer";
 import AjaxHelper from "../AjaxHelper";
 
 export default function Evaluation() {
 
     const [issueWithLabel, setIssueWithLabel] = useState(null);
-    const [issue, setIssue] = useState(null);
+    const [issueWithLabel2, setIssueWithLabel2] = useState(null);
     const [ready, setReady] = useState(false);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         loadLimeData()
@@ -15,21 +16,46 @@ export default function Evaluation() {
 
     const loadLimeData = () => {
         setIssueWithLabel(null)
-        AjaxHelper.getRandomIssueLime("bug").then(function (response) {
-            setIssueWithLabel(response);
+        setIssueWithLabel2(null)
+        AjaxHelper.getRandomIssueSet().then(function (response) {
+            if(!response.error) {
+                setError(false)
+                setIssueWithLabel(response.issue1);
+                setIssueWithLabel2(response.issue2);
+            } else {
+                setError(true)
+            }
         });
+    }
+
+    const saveData = () => {
+
     }
 
     const skipIssueClick = () => {
       loadLimeData()
     }
 
-    let issueView = () => {
-        return issueWithLabel ? <IssueLabelViewer predict_proba={issueWithLabel.predict_proba}
-                                                  classes={issueWithLabel.class_names}
-                                                  text={issueWithLabel.sample}
-                                                  xai_toolkit_response={issueWithLabel.xai_toolkit_response}/> : <>Lade
-            Daten..</>
+    let issueView = (id) => {
+        if(id === "left") {
+            return issueWithLabel ? <IssueLabelViewer predict_proba={issueWithLabel.predict_proba}
+                                                         classes={issueWithLabel.class_names}
+                                                         text={issueWithLabel.sample}
+                                                      withLabel={false}
+                                                       clueMode={issueWithLabel.clueMode}
+                                                         xai_toolkit_response={issueWithLabel.xai_toolkit_response}/> : <>Lade
+                Daten..</>
+        }
+
+        if(id === "right") {
+            return issueWithLabel2 ? <IssueLabelViewer predict_proba={issueWithLabel2.predict_proba}
+                                                         classes={issueWithLabel2.class_names}
+                                                         text={issueWithLabel2.sample}
+                                                      withLabel={false}
+                                                       clueMode={issueWithLabel2.clueMode}
+                                                         xai_toolkit_response={issueWithLabel2.xai_toolkit_response}/> : <>Lade
+                Daten..</>
+        }
     }
 
     let table = (id) => {
@@ -99,22 +125,25 @@ export default function Evaluation() {
                         <button className={"btn btn-primary"} onClick={() => setReady(true)}>I understand the definition and start labeling</button>
                     </Card.Body>
                 </Card> :
+                    error ? <>
+                        <Alert variant={"danger"}>This was an error. Check, if the data is prepared and already in the database for both tools.</Alert>
+                        </> :
 
                 <div className={"mt-2"}>
                     <Row>
                         <Col>
-                            {issueView()}
+                            {issueView("left")}
                             {table("left")}
                         </Col>
                         <Col>
-                            {issueView()}
+                            {issueView("right")}
                             {table("right")}
                         </Col>
                     </Row>
                     <Row>
                         <Col>
                             <button className={"btn btn-secondary m-1"} onClick={skipIssueClick}>Skip issue</button>
-                            <button className={"btn btn-success m-1"}>Submit data</button>
+                            <button className={"btn btn-success m-1"} onClick={saveData}>Submit data</button>
                         </Col>
                     </Row>
                 </div>

@@ -16,3 +16,13 @@ class Issue(models.Model):
     dataset = models.CharField(max_length=255, default="test")
     title = models.TextField()
     description = models.TextField()
+
+
+class Rating(models.Model):
+    issue_id = models.CharField(max_length=255)
+    algorithm = models.CharField(max_length=255)
+    rating1 = models.IntegerField()
+    rating2 = models.IntegerField()
+    rating3 = models.IntegerField()
+    rating4 = models.IntegerField()
+    order = models.IntegerField()  # number of elements seen before

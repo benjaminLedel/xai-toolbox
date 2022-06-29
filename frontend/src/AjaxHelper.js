@@ -4,6 +4,7 @@ import EventManager from "./EventManager";
 let BASE = "http://127.0.0.1:8000/api/"
 
 let API_ISSUE_RANDOM = "issue/random";
+let API_ISSUE_RANDOM_SET = "issue/randomSet";
 let API_ISSUE_RANDOM_LIME = "issue/random/lime";
 let API_ISSUE_RANDOM_SHAP = "issue/random/shap";
 let API_LOGIN = "token/";
@@ -48,6 +49,12 @@ class AjaxHelperSingleton {
     {
         return this._get(API_ISSUE_RANDOM)
     }
+
+    getRandomIssueSet()
+    {
+        return this._get(API_ISSUE_RANDOM_SET)
+    }
+
 
     getRandomIssueLime(bugType)
     {

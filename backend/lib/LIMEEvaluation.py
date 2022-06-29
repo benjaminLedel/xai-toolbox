@@ -34,11 +34,17 @@ class LIMEEvaluation:
         'rhino',
     ]
 
-    class_names = ['LABEL_0', 'LABEL_1']
+    class_names = ['bug', 'no bug']
 
-    def get_example_lime(self, bug_type):
+    def get_example_lime(self):
         random_object = XAICache.objects.order_by('?')[0]
         issue = Issue.objects.filter(id=random_object.issue_id).first()
+        return json.loads(random_object.viewData), issue.title + " " + issue.description, self.class_names
+
+    def get_lime(self, issue):
+        random_object = XAICache.objects.filter(issue_id=issue.id,xai_algorithm="lime").first()
+        if random_object is None:
+            return None
         return json.loads(random_object.viewData), issue.title + " " + issue.description, self.class_names
 
     def calculate_lime(self):
@@ -75,7 +81,8 @@ class LIMEEvaluation:
             index = index + 1
             print("(" + str(index) + "/" + str(count) + ")")
             explainer = LimeTextExplainer(class_names=self.class_names)
-            exp = explainer.explain_instance(issue.title + " " + issue.description, pred, num_features=10,
+            text = issue.title + " " + issue.description
+            exp = explainer.explain_instance(" ".join(text.split()[:400]), pred, num_features=10,
                                              num_samples=400)
 
             cache = XAICache.objects.create(issue_id=issue.id,

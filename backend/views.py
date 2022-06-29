@@ -12,6 +12,7 @@ from backend.lib.SHAPEvaluation import SHAPEvaluation
 from rest_framework_simplejwt import authentication
 
 from backend.middleware import JWTMiddleware
+from backend.models import XAICache, Issue
 
 
 def index(request):
@@ -52,5 +53,39 @@ def randomIssueSHAP(request):
         "xai_toolkit_response": result[0],
         "predict_proba": [0, 2],
         "sample": result[1]
+    }
+    return HttpResponse(json.dumps(jsonResult), content_type="application/json")
+
+def randomIssueWithoutLabelingSet(request):
+    random_object = XAICache.objects.first()
+    #random_object = Issue.objects.order_by('?')[0]
+    random_object = Issue.objects.filter(id=random_object.issue_id).first()
+    lime = LIMEEvaluation()
+    result1 = lime.get_lime(random_object)
+    shap = SHAPEvaluation()
+    result2 = shap.get_shap(random_object)
+
+    if result1 is None or result2 is None:
+        jsonResult = {
+            "error": True,
+        }
+        return HttpResponse(json.dumps(jsonResult), content_type="application/json")
+
+    jsonResult = {
+        "error": False,
+        "issue1" : {
+            "class_names": result1[2],
+            "xai_toolkit_response": result1[0],
+            "predict_proba": [0, 2],
+            "sample": result1[1],
+            "clueMode": False,
+        },
+        "issue2": {
+            "class_names": result2[2],
+            "xai_toolkit_response": result2[0],
+            "predict_proba": [0, 2],
+            "sample": result2[1],
+            "clueMode": True
+        }
     }
     return HttpResponse(json.dumps(jsonResult), content_type="application/json")

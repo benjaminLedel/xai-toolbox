@@ -1,15 +1,12 @@
 .marker-green {
     background-color: rgb(185,22,56) !important;
-    color: #fff !important;
     border-radius: 5px;
 }
 .marker-yellow {
     background-color: rgb(34,87,201) !important;
-    color: #fff !important;
     border-radius: 5px;
 }
 
 .marker-view {
-    color: #fff !important;
     border-radius: 5px;
 }

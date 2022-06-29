@@ -25,23 +25,24 @@ ChartJS.register(
 );
 
 export default function IssueLabelViewer(props) {
-    var text =  props.text?.replace(/(?:\r\n|\r|\n)/g, '<br>').toLowerCase();
-    const withLabel = props.withLabel ? props.withLabel : true;
+    var text =  props.text?.replace(/(?:\r\n|\r|\n)/g, ' ').toLowerCase();
+    const withLabel = props.withLabel === null ? true : props.withLabel;
+    const clueMode = props.clueMode === null ? false : props.clueMode;
     const withBarChart = props.withBarChart ? props.withBarChart : true;
     const editable = props.editable ? props.editable : false;
 
-    const labels = props.xai_toolkit_response?.map((word) => word[0]);
+    const labels = props.xai_toolkit_response?.slice(0,10).map((word) => word[0]);
     const data = {
         labels,
         datasets: [
             {
                 label: props.classes[0],
-                data: props.lime?.map((word) => word[1] < 0 ? word[1] : 0),
+                data: props.xai_toolkit_response?.slice(0,10).map((word) => word[1] < 0 ? word[1] : 0),
                 backgroundColor: 'rgb(34,87,201)',
             },
             {
                 label: props.classes[1],
-                data: props.lime?.map((word) => word[1] > 0 ? word[1] : 0),
+                data: props.xai_toolkit_response?.slice(0,10).map((word) => word[1] > 0 ? word[1] : 0),
                 backgroundColor: 'rgb(185,22,56)',
             }
         ],
@@ -62,31 +63,50 @@ export default function IssueLabelViewer(props) {
     const max = Math.max(...props.xai_toolkit_response.map(function(row){ return row[1] }));
     const faktor = 1 / max;
 
-    // replace in the data
-    props.xai_toolkit_response?.forEach(function (word) {
-        if(word[0].trim().length <= 3)
-            return;
-        console.log(word[0])
-        const cssClass = word[1] < 0 ? 'marker-yellow' : 'marker-green';
-        text = text.replace(new RegExp("(?:^|\\W)" + word[0] + "(?:$|\\W)", "gm"), ' ' +
-            '</div><div class="marker-view" style="background-color: ' + (cssClass !== "marker-yellow" ? "rgb(185,22,56," + Math.abs(faktor * word[1]) + ")" : "rgb(34,87,201," + Math.abs(faktor * word[1]) + ")" ) + '; display: inline; margin: 2px;">' + word[0] +
-            '</div><div style="display: inline;"> ')
-        console.log(text)
-    })
-    text = '<div style="display: inline;">' + text + '</div>';
-   // text = text.replace('<div style="display: inline;"> </div>','')
-
+            console.log("clueMode: " + clueMode)
+    if(!clueMode)
+    {
+          text = props.xai_toolkit_response?.map(function (word) {
+            const cssClass = word[1] < 0 ? 'marker-yellow' : 'marker-green';
+            const visiblity = Math.abs(faktor * word[1]);
+            var color = "#fff";
+            if(visiblity < 0.15)
+            {
+                color = "#000";
+            }
+            return '<div class="marker-view" style="color: ' + color + '; background-color: ' + (cssClass !== "marker-yellow" ? "rgb(185,22,56," + visiblity + ")" : "rgb(34,87,201," + visiblity + ")") + '; display: inline; margin: 2px;">' + word[0] +
+                '</div>'
+        }).join(" ")
+    } else {
+        // replace in the data
+        props.xai_toolkit_response?.forEach(function (word) {
+            if (word[0].trim().length <= 3)
+                return;
+            const cssClass = word[1] < 0 ? 'marker-yellow' : 'marker-green';
+            const visiblity = Math.abs(faktor * word[1]);
+            var color = "#fff";
+            if(visiblity < 0.15)
+            {
+                color = "#000";
+            }
+            text = text.replace(new RegExp("(?:^|\\W)" + word[0] + "(?:$|\\W)", "gm"), ' ' +
+                '</div><div class="marker-view" style="color: ' + color + '; background-color: ' + (cssClass !== "marker-yellow" ? "rgb(185,22,56," + visiblity + ")" : "rgb(34,87,201," + visiblity + ")") + '; display: inline; margin: 2px;">' + word[0] +
+                '</div><div style="display: inline;"> ')
+        })
+        text = '<div style="display: inline;">' + text + '</div>';
+        text = text.replace('<div style="display: inline;"> </div>','')
+    }
     console.log(text)
 
     return <Container className={"mt-4 mb-4"}>
         <Row>
-            <Col xs={6}>
+            <Col xs={withLabel === true ? 6 : 12 }>
                 {
                     withBarChart ? <Bar options={options} data={data}/> : <></>
                 }
             </Col>
             <Col xs={6}>
-                {withLabel ? <p>Predicted as: <b
+                {withLabel === true ? <p>Predicted as: <b
                     style={{color: classIndex === 0 ? 'rgb(34,87,201)' : 'rgb(185,22,56)'}}>{props.classes[classIndex]}</b>
                     <br></br>
                     Score: <b>{Math.max(...props.predict_proba)}</b>

@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/admin/', admin.site.urls),
     path('api/me/', views.me, name="me"),
     path('api/issue/random', views.randomIssueWithoutLabeling, name='random'),
+    path('api/issue/randomSet', views.randomIssueWithoutLabelingSet, name='randomSet'),
     path('api/issue/random/lime', views.randomIssueLIME, name='randomLime'),
     path('api/issue/random/shap', views.randomIssueSHAP, name='randomShap'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

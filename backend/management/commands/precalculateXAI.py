@@ -10,7 +10,8 @@ class Command(BaseCommand):
     help = 'Precalculates the data for shap, lime and all other xai tools'
 
     def handle(self, *args, **options):
-        XAICache.objects.all().delete()
+     # can be used to reset the database 
+     #   XAICache.objects.all().delete()
 
         lime = LIMEEvaluation()
         lime.calculate_lime()

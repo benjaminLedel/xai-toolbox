@@ -23,7 +23,8 @@ class SHAPEvaluation:
         'rhino',
     ]
 
-    class_names = ['no bug', 'bug']
+    class_names = ['bug', 'no bug']
+    class_names2 = ['no bug', 'bug']
 
     def calculate_shap(self, grouping_threshold=0.01, separator=''):
         seed = 42
@@ -52,7 +53,8 @@ class SHAPEvaluation:
                 index = index + 1
                 print("(" + str(index) + "/" + str(count) + ")")
                 explainer = shap.Explainer(pipe)
-                shap_values = explainer([issue.title + " " + issue.description])[0]
+                text = issue.title + " " + issue.description
+                shap_values = explainer([" ".join(text.split()[:400])])[0]
                 values, clustering = self.unpack_shap_explanation_contents(shap_values[:, 0])
                 tokens, values, group_sizes = self.process_shap_values(shap_values[:,0].data, values, grouping_threshold,
                                                                        separator, clustering)
@@ -194,10 +196,16 @@ class SHAPEvaluation:
         else:
             return tokens, values, group_sizes
 
-    def get_example_shap(self, bug_type):
+    def get_example_shap(self):
         random_object = XAICache.objects.order_by('?')[0]
+        issue = Issue.objects.filter(id=random_object.issue_id).first()
+        return json.loads(random_object.viewData), issue.title + " " + issue.description, self.class_names
 
-        return json.loads(random_object.viewData),"test",self.class_names
+    def get_shap(self, issue):
+        random_object = XAICache.objects.filter(issue_id=issue.id,xai_algorithm="shap").first()
+        if random_object is None:
+            return None
+        return json.loads(random_object.viewData), issue.title + " " + issue.description, self.class_names
 
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
