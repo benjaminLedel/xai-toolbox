@@ -86,6 +86,12 @@ export default function Evaluation() {
         setResponseObject(cloneResponseObject)
     }
 
+    let valueGrapper = (keyId, value) => {
+        keyId = keyId.replace("left",left);
+        keyId = keyId.replace("right",right);
+        return responseObject[keyId] == value
+    }
+
     let table = (id) => {
         return <Table striped bordered hover>
             <thead>
@@ -99,9 +105,9 @@ export default function Evaluation() {
             <tbody>
             <tr>
                 <td>Related</td>
-                <td><Form.Check value={"-1"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
-                <td><Form.Check value={"0"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
-                <td><Form.Check value={"1"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("related" + id,"-1")} value={"-1"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("related" + id,"0")} value={"0"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("related" + id,"1")} value={"1"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
             </tr>
             <tr>
                 <td>Unambigiuous</td>
