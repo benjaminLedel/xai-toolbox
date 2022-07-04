@@ -66,7 +66,8 @@ class LIMEEvaluation:
 
         # load a transformers pipeline model
         pipe = transformers.pipeline('sentiment-analysis',
-                                     return_all_scores=True, model=model, tokenizer=tokenizer)
+                                     return_all_scores=True, model=model, tokenizer=tokenizer, truncation=True,
+                                     max_length=128)
 
         def pred(x):
             output = pipe(x)
@@ -79,6 +80,8 @@ class LIMEEvaluation:
         index = 0
         for issue in Issue.objects.all():
             index = index + 1
+            if XAICache.objects.filter(issue_id=issue.id,xai_algorithm="lime").exists():
+                continue
             print("(" + str(index) + "/" + str(count) + ")")
             explainer = LimeTextExplainer(class_names=self.class_names)
             text = issue.title + " " + issue.description

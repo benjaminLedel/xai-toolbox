@@ -63,9 +63,9 @@ export default function IssueLabelViewer(props) {
     const max = Math.max(...props.xai_toolkit_response.map(function(row){ return row[1] }));
     const faktor = 1 / max;
 
-            console.log("clueMode: " + clueMode)
-    if(!clueMode)
+    if(clueMode)
     {
+            console.log("clueMode: " + clueMode)
           text = props.xai_toolkit_response?.map(function (word) {
             const cssClass = word[1] < 0 ? 'marker-yellow' : 'marker-green';
             const visiblity = Math.abs(faktor * word[1]);
@@ -78,6 +78,7 @@ export default function IssueLabelViewer(props) {
                 '</div>'
         }).join(" ")
     } else {
+            console.log("clueMode2: " + clueMode)
         // replace in the data
         props.xai_toolkit_response?.forEach(function (word) {
             if (word[0].trim().length <= 3)

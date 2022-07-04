@@ -1,9 +1,11 @@
 import json
+import random
 
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.utils.decorators import decorator_from_middleware
+from django.views.decorators.csrf import csrf_exempt
 
 from backend.lib.IssueRepository import IssueRepository
 from backend.lib.LIMEEvaluation import LIMEEvaluation
@@ -12,7 +14,7 @@ from backend.lib.SHAPEvaluation import SHAPEvaluation
 from rest_framework_simplejwt import authentication
 
 from backend.middleware import JWTMiddleware
-from backend.models import XAICache, Issue
+from backend.models import XAICache, Issue, Rating
 
 
 def index(request):
@@ -59,11 +61,25 @@ def randomIssueSHAP(request):
 def randomIssueWithoutLabelingSet(request):
     random_object = XAICache.objects.first()
     #random_object = Issue.objects.order_by('?')[0]
-    random_object = Issue.objects.filter(id=random_object.issue_id).first()
+    issue_id = random_object.issue_id
+    random_object = Issue.objects.filter(id=issue_id).first()
     lime = LIMEEvaluation()
-    result1 = lime.get_lime(random_object)
+    result_lime = lime.get_lime(random_object)
     shap = SHAPEvaluation()
-    result2 = shap.get_shap(random_object)
+    result_shap = shap.get_shap(random_object)
+
+    leftIsLime = random.choice([True, False])
+
+    if leftIsLime:
+        left = "lime"
+        right = "shap"
+        result1 = result_lime
+        result2 = result_shap
+    else:
+        left = "shap"
+        right = "lime"
+        result1 = result_lime
+        result2 = result_shap
 
     if result1 is None or result2 is None:
         jsonResult = {
@@ -73,6 +89,9 @@ def randomIssueWithoutLabelingSet(request):
 
     jsonResult = {
         "error": False,
+        "left": left,
+        "right": right,
+        "issue_id": issue_id,
         "issue1" : {
             "class_names": result1[2],
             "xai_toolkit_response": result1[0],
@@ -87,5 +106,40 @@ def randomIssueWithoutLabelingSet(request):
             "sample": result2[1],
             "clueMode": True
         }
+    }
+    return HttpResponse(json.dumps(jsonResult), content_type="application/json")
+
+@decorator_from_middleware(JWTMiddleware)
+@csrf_exempt
+def create_rating(request):
+    current_user = request.user
+    if not current_user:
+        return HttpResponse(json.dumps({}))
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    issue = body["issue"]
+    rating = body["rating"]
+
+    rating1 = Rating.objects.create(issue_id=issue,
+                                    user=current_user,
+                                    algorithm="shap",
+                                    rating1=rating["related-shap"],
+                                    rating2=rating["unambigiuous-shap"],
+                                    rating3=rating["contextual-shap"],
+                                    rating4=rating["insightful-shap"],
+                                    order=0 )
+
+    rating2 = Rating.objects.create(issue_id=issue,
+                                    user=current_user,
+                                    algorithm="lime",
+                                    rating1=rating["related-lime"],
+                                    rating2=rating["unambigiuous-lime"],
+                                    rating3=rating["contextual-lime"],
+                                    rating4=rating["insightful-lime"],
+                                    order=0 )
+
+    jsonResult = {
+        "status": "Created rating"
     }
     return HttpResponse(json.dumps(jsonResult), content_type="application/json")

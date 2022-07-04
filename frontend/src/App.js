@@ -11,6 +11,7 @@ import AppGateway from "./AppGateway";
 import MainNavbar from "./MainNavbar";
 import {Container} from "react-bootstrap";
 import XAILoading from "./xAILoading";
+import {NotificationContainer} from 'react-notifications';
 
 export const BASE_ROUTES =
     {
@@ -26,6 +27,7 @@ class App extends React.Component {
 
     render() {
         return <Router>
+            <NotificationContainer/>
             <div className="App">
                 <MainNavbar>
                     <Container>

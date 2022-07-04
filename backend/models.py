@@ -1,5 +1,6 @@
 import copy
 from django.db import models, transaction
+from django.conf import settings
 
 
 class XAICache(models.Model):
@@ -20,6 +21,10 @@ class Issue(models.Model):
 
 class Rating(models.Model):
     issue_id = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
     algorithm = models.CharField(max_length=255)
     rating1 = models.IntegerField()
     rating2 = models.IntegerField()

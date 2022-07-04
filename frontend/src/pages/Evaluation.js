@@ -2,13 +2,19 @@ import React, {useEffect, useState} from "react";
 import {Col, Row, Table, Form, Card, Alert} from "react-bootstrap";
 import IssueLabelViewer from "../components/IssueLabelViewer";
 import AjaxHelper from "../AjaxHelper";
+import {clone} from "chart.js/helpers";
+import Helper from "../helper";
 
 export default function Evaluation() {
 
+    const [issueId, setIssueId] = useState(null);
     const [issueWithLabel, setIssueWithLabel] = useState(null);
     const [issueWithLabel2, setIssueWithLabel2] = useState(null);
     const [ready, setReady] = useState(false);
     const [error, setError] = useState(false);
+    const [responseObject, setResponseObject] = useState([]);
+    const [left, setLeft] = useState("");
+    const [right, setRight] = useState("");
 
     useEffect(() => {
         loadLimeData()
@@ -17,11 +23,15 @@ export default function Evaluation() {
     const loadLimeData = () => {
         setIssueWithLabel(null)
         setIssueWithLabel2(null)
+        setResponseObject([]);
         AjaxHelper.getRandomIssueSet().then(function (response) {
             if(!response.error) {
                 setError(false)
                 setIssueWithLabel(response.issue1);
                 setIssueWithLabel2(response.issue2);
+                setLeft(response.left)
+                setRight(response.right)
+                setIssueId(response.issue_id)
             } else {
                 setError(true)
             }
@@ -29,7 +39,16 @@ export default function Evaluation() {
     }
 
     const saveData = () => {
-
+        console.log(responseObject)
+        if(Object.keys(responseObject).length != 8)
+        {
+            Helper.fireWarningToast("Please check your input","You need to decide for all categories and for both issues, if the category belongs to the explanation or not.")
+        } else {
+            AjaxHelper.saveRating(responseObject, issueId).then(function (response) {
+                Helper.fireSuccessToast("Saved your input", "We saved your input data")
+                loadLimeData()
+            });
+        }
     }
 
     const skipIssueClick = () => {
@@ -58,6 +77,15 @@ export default function Evaluation() {
         }
     }
 
+    let updateValue = (keyId, e) =>
+    {
+        keyId = keyId.replace("left",left);
+        keyId = keyId.replace("right",right);
+        let cloneResponseObject = Object.assign({}, responseObject);
+        cloneResponseObject[keyId] = e.target.value;
+        setResponseObject(cloneResponseObject)
+    }
+
     let table = (id) => {
         return <Table striped bordered hover>
             <thead>
@@ -71,27 +99,27 @@ export default function Evaluation() {
             <tbody>
             <tr>
                 <td>Related</td>
-                <td><Form.Check inline name={"related" + id} type={"radio"}/></td>
-                <td><Form.Check inline name={"related" + id} type={"radio"}/></td>
-                <td><Form.Check inline name={"related" + id} type={"radio"}/></td>
+                <td><Form.Check value={"-1"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check value={"0"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check value={"1"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
             </tr>
             <tr>
                 <td>Unambigiuous</td>
-                <td><Form.Check inline name={"unambigiuous" + id} type={"radio"}/></td>
-                <td><Form.Check inline name={"unambigiuous" + id} type={"radio"}/></td>
-                <td><Form.Check inline name={"unambigiuous" + id} type={"radio"}/></td>
+                <td><Form.Check value={"-1"} inline name={"unambigiuous" + id} onChange={(e) => { updateValue("unambigiuous-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check value={"0"} inline name={"unambigiuous" + id} onChange={(e) => { updateValue("unambigiuous-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check value={"1"} inline name={"unambigiuous" + id} onChange={(e) => { updateValue("unambigiuous-" + id,e)}} type={"radio"}/></td>
             </tr>
             <tr>
                 <td>Contextual</td>
-                <td><Form.Check inline name={"contextual" + id} type={"radio"}/></td>
-                <td><Form.Check inline name={"contextual" + id} type={"radio"}/></td>
-                <td><Form.Check inline name={"contextual" + id} type={"radio"}/></td>
+                <td><Form.Check value={"-1"} inline name={"contextual" + id} onChange={(e) => { updateValue("contextual-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check value={"0"} inline name={"contextual" + id} onChange={(e) => { updateValue("contextual-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check value={"1"} inline name={"contextual" + id} onChange={(e) => { updateValue("contextual-" + id,e)}} type={"radio"}/></td>
             </tr>
             <tr>
                 <td>Insightful</td>
-                <td><Form.Check inline name={"insightful" + id} type={"radio"}/></td>
-                <td><Form.Check inline name={"insightful" + id} type={"radio"}/></td>
-                <td><Form.Check inline name={"insightful" + id} type={"radio"}/></td>
+                <td><Form.Check value={"-1"} inline name={"insightful" + id} onChange={(e) => { updateValue("insightful-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check value={"0"} inline name={"insightful" + id} onChange={(e) => { updateValue("insightful-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check value={"1"} inline name={"insightful" + id} onChange={(e) => { updateValue("insightful-" + id,e)}} type={"radio"}/></td>
             </tr>
             </tbody>
         </Table>

@@ -45,30 +45,33 @@ class SHAPEvaluation:
 
         # load a transformers pipeline model
         pipe = transformers.pipeline('sentiment-analysis',
-                                     return_all_scores=True, model=model, tokenizer=tokenizer)
+                                     return_all_scores=True, model=model, tokenizer=tokenizer, truncation=True,
+                                     max_length=128)
 
         count = Issue.objects.count()
         index = 0
         for issue in Issue.objects.all():
-                index = index + 1
-                print("(" + str(index) + "/" + str(count) + ")")
-                explainer = shap.Explainer(pipe)
-                text = issue.title + " " + issue.description
-                shap_values = explainer([" ".join(text.split()[:400])])[0]
-                values, clustering = self.unpack_shap_explanation_contents(shap_values[:, 0])
-                tokens, values, group_sizes = self.process_shap_values(shap_values[:,0].data, values, grouping_threshold,
-                                                                       separator, clustering)
-                result_array = []
-                for i, token in enumerate(tokens):
-                    result_array.append([token, values[i]])
+            index = index + 1
+            if XAICache.objects.filter(issue_id=issue.id,xai_algorithm="shap").exists():
+                continue
+            print("(" + str(index) + "/" + str(count) + ")")
+            explainer = shap.Explainer(pipe)
+            text = issue.title + " " + issue.description
+            shap_values = explainer([text])[0]
+            values, clustering = self.unpack_shap_explanation_contents(shap_values[:, 0])
+            tokens, values, group_sizes = self.process_shap_values(shap_values[:, 0].data, values, grouping_threshold,
+                                                                   separator, clustering)
+            result_array = []
+            for i, token in enumerate(tokens):
+                result_array.append([token, values[i]])
 
-                cache = XAICache.objects.create(issue_id=issue.id,
-                                                project=issue.project,
-                                                xai_algorithm="shap",
-                                                algorithm="seBERT",
-                                                viewData=json.dumps(result_array,
-                                                                    cls=NumpyEncoder))
-                cache.save()
+            cache = XAICache.objects.create(issue_id=issue.id,
+                                            project=issue.project,
+                                            xai_algorithm="shap",
+                                            algorithm="seBERT",
+                                            viewData=json.dumps(result_array,
+                                                                cls=NumpyEncoder))
+            cache.save()
 
     def unpack_shap_explanation_contents(self, shap_values):
         values = getattr(shap_values, "hierarchical_values", None)
@@ -78,7 +81,8 @@ class SHAPEvaluation:
 
         return np.array(values), clustering
 
-    def process_shap_values(self, tokens, values, grouping_threshold, separator, clustering=None, return_meta_data=False):
+    def process_shap_values(self, tokens, values, grouping_threshold, separator, clustering=None,
+                            return_meta_data=False):
 
         # See if we got hierarchical input data. If we did then we need to reprocess the
         # shap_values and tokens to get the groups we want to display
@@ -202,10 +206,11 @@ class SHAPEvaluation:
         return json.loads(random_object.viewData), issue.title + " " + issue.description, self.class_names
 
     def get_shap(self, issue):
-        random_object = XAICache.objects.filter(issue_id=issue.id,xai_algorithm="shap").first()
+        random_object = XAICache.objects.filter(issue_id=issue.id, xai_algorithm="shap").first()
         if random_object is None:
             return None
         return json.loads(random_object.viewData), issue.title + " " + issue.description, self.class_names
+
 
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):

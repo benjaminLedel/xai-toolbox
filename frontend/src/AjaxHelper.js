@@ -8,6 +8,7 @@ let API_ISSUE_RANDOM_SET = "issue/randomSet";
 let API_ISSUE_RANDOM_LIME = "issue/random/lime";
 let API_ISSUE_RANDOM_SHAP = "issue/random/shap";
 let API_LOGIN = "token/";
+let API_RATING_SAVE = "rating/create";
 let API_ME = "me/";
 
 class AjaxHelperSingleton {
@@ -53,6 +54,11 @@ class AjaxHelperSingleton {
     getRandomIssueSet()
     {
         return this._get(API_ISSUE_RANDOM_SET)
+    }
+
+    saveRating(rating, issue)
+    {
+        return this._post(API_RATING_SAVE,{rating: rating, issue: issue})
     }
 
 
