@@ -105,27 +105,27 @@ export default function Evaluation() {
             <tbody>
             <tr>
                 <td>Related</td>
-                <td><Form.Check checked={valueGrapper("related" + id,"-1")} value={"-1"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
-                <td><Form.Check checked={valueGrapper("related" + id,"0")} value={"0"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
-                <td><Form.Check checked={valueGrapper("related" + id,"1")} value={"1"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("related-" + id,"-1")} value={"-1"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("related-" + id,"0")} value={"0"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("related-" + id,"1")} value={"1"} inline name={"related" + id} onChange={(e) => { updateValue("related-" + id,e)}} type={"radio"}/></td>
             </tr>
             <tr>
                 <td>Unambigiuous</td>
-                <td><Form.Check value={"-1"} inline name={"unambigiuous" + id} onChange={(e) => { updateValue("unambigiuous-" + id,e)}} type={"radio"}/></td>
-                <td><Form.Check value={"0"} inline name={"unambigiuous" + id} onChange={(e) => { updateValue("unambigiuous-" + id,e)}} type={"radio"}/></td>
-                <td><Form.Check value={"1"} inline name={"unambigiuous" + id} onChange={(e) => { updateValue("unambigiuous-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("unambigiuous-" + id,"-1")} value={"-1"} inline name={"unambigiuous" + id} onChange={(e) => { updateValue("unambigiuous-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("unambigiuous-" + id,"0")} value={"0"} inline name={"unambigiuous" + id} onChange={(e) => { updateValue("unambigiuous-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("unambigiuous-" + id,"1")} value={"1"} inline name={"unambigiuous" + id} onChange={(e) => { updateValue("unambigiuous-" + id,e)}} type={"radio"}/></td>
             </tr>
             <tr>
                 <td>Contextual</td>
-                <td><Form.Check value={"-1"} inline name={"contextual" + id} onChange={(e) => { updateValue("contextual-" + id,e)}} type={"radio"}/></td>
-                <td><Form.Check value={"0"} inline name={"contextual" + id} onChange={(e) => { updateValue("contextual-" + id,e)}} type={"radio"}/></td>
-                <td><Form.Check value={"1"} inline name={"contextual" + id} onChange={(e) => { updateValue("contextual-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("contextual-" + id,"-1")} value={"-1"} inline name={"contextual" + id} onChange={(e) => { updateValue("contextual-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("contextual-" + id,"0")} value={"0"} inline name={"contextual" + id} onChange={(e) => { updateValue("contextual-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("contextual-" + id,"1")} value={"1"} inline name={"contextual" + id} onChange={(e) => { updateValue("contextual-" + id,e)}} type={"radio"}/></td>
             </tr>
             <tr>
                 <td>Insightful</td>
-                <td><Form.Check value={"-1"} inline name={"insightful" + id} onChange={(e) => { updateValue("insightful-" + id,e)}} type={"radio"}/></td>
-                <td><Form.Check value={"0"} inline name={"insightful" + id} onChange={(e) => { updateValue("insightful-" + id,e)}} type={"radio"}/></td>
-                <td><Form.Check value={"1"} inline name={"insightful" + id} onChange={(e) => { updateValue("insightful-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("insightful-" + id,"-1")}  value={"-1"} inline name={"insightful" + id} onChange={(e) => { updateValue("insightful-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("insightful-" + id,"0")}  value={"0"} inline name={"insightful" + id} onChange={(e) => { updateValue("insightful-" + id,e)}} type={"radio"}/></td>
+                <td><Form.Check checked={valueGrapper("insightful-" + id,"1")}  value={"1"} inline name={"insightful" + id} onChange={(e) => { updateValue("insightful-" + id,e)}} type={"radio"}/></td>
             </tr>
             </tbody>
         </Table>
