@@ -15,6 +15,7 @@ export default function Evaluation() {
     const [responseObject, setResponseObject] = useState([]);
     const [left, setLeft] = useState("");
     const [right, setRight] = useState("");
+    const [title, setTitle] = useState(null);
 
     useEffect(() => {
         loadLimeData()
@@ -32,8 +33,10 @@ export default function Evaluation() {
                 setLeft(response.left)
                 setRight(response.right)
                 setIssueId(response.issue_id)
+                setTitle(null)
             } else {
                 setError(true)
+                setTitle(response.title)
             }
         });
     }
@@ -159,9 +162,14 @@ export default function Evaluation() {
                         <button className={"btn btn-primary"} onClick={() => setReady(true)}>I understand the definition and start labeling</button>
                     </Card.Body>
                 </Card> :
+                 title ?
+                             <>
+                        <Alert variant={"warning"}>{title}</Alert>
+                        </> :
                     error ? <>
                         <Alert variant={"danger"}>This was an error. Check, if the data is prepared and already in the database for both tools.</Alert>
                         </> :
+
 
                 <div className={"mt-2"}>
                     <Row>
