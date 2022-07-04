@@ -89,10 +89,10 @@ def randomIssueWithoutLabelingSet(request):
         # check if we have data for the issue
         if not XAICache.objects.filter(issue_id=issue.id, xai_algorithm="lime").exists() or not XAICache.objects.filter(issue_id=issue.id,xai_algorithm="shap").exists():
             issue = None
-        if i > number_of_issue:
+        if i > 100000000000:
             jsonResult = {
                 "error": True,
-                "title": "Great! You have labeled all data so far."
+                "title": "Try again"
             }
             return HttpResponse(json.dumps(jsonResult), content_type="application/json")
         i = i + 1

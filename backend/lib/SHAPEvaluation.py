@@ -23,7 +23,7 @@ class SHAPEvaluation:
         'rhino',
     ]
 
-    class_names = ['bug', 'no bug']
+    class_names = ['no bug', 'bug']
     class_names2 = ['no bug', 'bug']
 
     def calculate_shap(self, grouping_threshold=0.01, separator=''):

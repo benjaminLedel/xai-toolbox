@@ -34,7 +34,7 @@ class LIMEEvaluation:
         'rhino',
     ]
 
-    class_names = ['bug', 'no bug']
+    class_names = ['no bug', 'bug']
 
     def get_example_lime(self):
         random_object = XAICache.objects.order_by('?')[0]
