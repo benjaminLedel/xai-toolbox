@@ -1,0 +1,16 @@
+.evaluation-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.issue-row {
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+}
+
+.row-item {
+    width: 50%;
+    margin: 5px;
+}

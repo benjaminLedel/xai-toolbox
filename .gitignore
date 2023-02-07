@@ -1,3 +1,11 @@
 __pycache__/
 .idea
 /backend/models/seBERT/*.bin
+.devcontainer
+bin
+/backend/models/seBERT/
+node_modules
+lib
+lib*
+share
+*.cfg

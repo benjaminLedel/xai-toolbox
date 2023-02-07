@@ -1,17 +1,13 @@
-import React from "react";
-import {CKEditor} from "@ckeditor/ckeditor5-react";
-import Editor from "ckeditor5-custom-build";
-import {Bar} from 'react-chartjs-2';
+import { CKEditor } from "@ckeditor/ckeditor5-react";
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
+    BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title,
+    Tooltip
 } from 'chart.js';
-import {Col, Container, Row} from "react-bootstrap";
+import Editor from "ckeditor5-custom-build";
+import React from "react";
+import { Col, Container, Row } from "react-bootstrap";
+import { Bar } from 'react-chartjs-2';
+import { v4 as uuidv4 } from 'uuid';
 import "./marker.css";
 
 
@@ -24,25 +20,52 @@ ChartJS.register(
     Legend
 );
 
+function getHTMLWrapper(word, rating, factor) {
+    if (word === "") {
+        return word
+    }
+    const cssClass = rating < 0 ? 'marker-yellow' : 'marker-green';
+    const visiblity = Math.abs(factor * rating) !== Infinity ? Math.abs(factor * rating) : 0.0001;
+    var color = "#fff";
+    if (visiblity < 0.15) {
+        color = "#000";
+    }
+    word = word.replace(/[&<>]/g, replaceHTMLTags);
+    console.log({ word, visiblity })
+    return '<div class="marker-view" style="color: ' + color + '; background-color: ' + (cssClass !== "marker-yellow" ? "rgb(185,22,56," + visiblity + ")" : "rgb(34,87,201," + visiblity + ")") + '; display: inline; margin: 2px;">' + word + '</div>'
+}
+
+function replaceHTMLTags(tag) {
+    var tagsToReplace = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;'
+    };
+
+    return tagsToReplace[tag] || tag;
+}
+
 export default function IssueLabelViewer(props) {
-    var text =  props.text?.replace(/(?:\r\n|\r|\n)/g, ' ').toLowerCase();
+    var text = props.text?.replace(/(?:\r\n|\r|\n)/g, ' ').replace(/[&<>]/g, replaceHTMLTags);
     const withLabel = props.withLabel === null ? true : props.withLabel;
+    /** clueMode is true if all the text elements are available. it is false if only the 10 most importent ones are */
     const clueMode = props.clueMode === null ? false : props.clueMode;
     const withBarChart = props.withBarChart ? props.withBarChart : true;
     const editable = props.editable ? props.editable : false;
 
-    const labels = props.xai_toolkit_response?.slice(0,10).map((word) => word[0]);
+    const sortedResponses = props.xai_toolkit_response.sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 10)
+    const labels = sortedResponses.map((word) => word[0]);
     const data = {
         labels,
         datasets: [
             {
                 label: props.classes[0],
-                data: props.xai_toolkit_response?.slice(0,10).map((word) => word[1] < 0 ? word[1] : 0),
+                data: sortedResponses.map((word) => word[1] < 0 ? word[1] : 0),
                 backgroundColor: 'rgb(34,87,201)',
             },
             {
                 label: props.classes[1],
-                data: props.xai_toolkit_response?.slice(0,10).map((word) => word[1] > 0 ? word[1] : 0),
+                data: sortedResponses.map((word) => word[1] > 0 ? word[1] : 0),
                 backgroundColor: 'rgb(185,22,56)',
             }
         ],
@@ -60,55 +83,43 @@ export default function IssueLabelViewer(props) {
 
     const classIndex = props.predict_proba.indexOf(Math.max(...props.predict_proba));
 
-    const max = Math.max(...props.xai_toolkit_response.map(function(row){ return row[1] }));
-    const faktor = 1 / max;
+    const max = Math.max(...props.xai_toolkit_response.map(([_, rating]) => Math.abs(rating)));
+    const factor = 1 / max;
 
-    if(clueMode)
-    {
-            console.log("clueMode: " + clueMode)
-          text = props.xai_toolkit_response?.map(function (word) {
-            const cssClass = word[1] < 0 ? 'marker-yellow' : 'marker-green';
-            const visiblity = Math.abs(faktor * word[1]);
-            var color = "#fff";
-            if(visiblity < 0.15)
-            {
-                color = "#000";
-            }
-            return '<div class="marker-view" style="color: ' + color + '; background-color: ' + (cssClass !== "marker-yellow" ? "rgb(185,22,56," + visiblity + ")" : "rgb(34,87,201," + visiblity + ")") + '; display: inline; margin: 2px;">' + word[0] +
-                '</div>'
-        }).join(" ")
+    if (clueMode) {
+        /** we have access to all the words in the issue in the response list itself. so we only need to append them */
+        text = props.xai_toolkit_response.map(([word, rating]) => getHTMLWrapper(word, rating, factor)).join(" ")
     } else {
-            console.log("clueMode2: " + clueMode)
-        // replace in the data
-        props.xai_toolkit_response?.forEach(function (word) {
-            if (word[0].trim().length <= 3)
-                return;
-            const cssClass = word[1] < 0 ? 'marker-yellow' : 'marker-green';
-            const visiblity = Math.abs(faktor * word[1]);
-            var color = "#fff";
-            if(visiblity < 0.15)
-            {
-                color = "#000";
-            }
-            text = text.replace(new RegExp("(?:^|\\W)" + word[0] + "(?:$|\\W)", "gm"), ' ' +
-                '</div><div class="marker-view" style="color: ' + color + '; background-color: ' + (cssClass !== "marker-yellow" ? "rgb(185,22,56," + visiblity + ")" : "rgb(34,87,201," + visiblity + ")") + '; display: inline; margin: 2px;">' + word[0] +
-                '</div><div style="display: inline;"> ')
+        /** 
+         * map the important words to ids, then replace them by the ids. this ensures that words like 'class',
+         * which appear in the inserted html and the text corpus itself, are handled correctly. (overwritten or not).
+         */
+        var responseMapping = {}
+        props.xai_toolkit_response.forEach(([word, rating]) => {
+            const key = uuidv4();
+            responseMapping[key] = [word, rating];
+            const escapedWord = word.trim().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+            const regexStr = "(?:^|\\W)" + escapedWord + "(?:$|\\W)";
+            text = text.replaceAll(new RegExp(regexStr, "gm"), " " + key + " ");
         })
-        text = '<div style="display: inline;">' + text + '</div>';
-        text = text.replace('<div style="display: inline;"> </div>','')
+
+        Object.keys(responseMapping).forEach(key => {
+            const html = getHTMLWrapper(responseMapping[key][0], responseMapping[key][1], factor)
+            text = text.replaceAll(key, html)
+        })
     }
-    console.log(text)
+    text = '<div class="inline-text"> ' + text + ' </div>';
 
     return <Container className={"mt-4 mb-4"}>
         <Row>
-            <Col xs={withLabel === true ? 6 : 12 }>
+            <Col xs={withLabel === true ? 6 : 12}>
                 {
-                    withBarChart ? <Bar options={options} data={data}/> : <></>
+                    withBarChart ? <Bar options={options} data={data} /> : <></>
                 }
             </Col>
             <Col xs={6}>
                 {withLabel === true ? <p>Predicted as: <b
-                    style={{color: classIndex === 0 ? 'rgb(34,87,201)' : 'rgb(185,22,56)'}}>{props.classes[classIndex]}</b>
+                    style={{ color: classIndex === 0 ? 'rgb(34,87,201)' : 'rgb(185,22,56)' }}>{props.classes[classIndex]}</b>
                     <br></br>
                     Score: <b>{Math.max(...props.predict_proba)}</b>
                 </p> : <></>}
@@ -150,11 +161,11 @@ export default function IssueLabelViewer(props) {
                     }}
                     data={text}
                     onReady={(editor) => {
-                        if(props.editable) {
+                        if (props.editable) {
                             editor.plugins.get('RestrictedEditingModeEditing').enableCommand('highlight');
 
                             editor.model.document.selection.on('change:range', (eventInfo, directChange) => {
-                                editor.execute('highlight', {value: 'yellowMarker'});
+                                editor.execute('highlight', { value: 'yellowMarker' });
                             });
                         }
                     }}
