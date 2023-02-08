@@ -31,7 +31,6 @@ function getHTMLWrapper(word, rating, factor) {
         color = "#000";
     }
     word = word.replace(/[&<>]/g, replaceHTMLTags);
-    console.log({ word, visiblity })
     return '<div class="marker-view" style="color: ' + color + '; background-color: ' + (cssClass !== "marker-yellow" ? "rgb(185,22,56," + visiblity + ")" : "rgb(34,87,201," + visiblity + ")") + '; display: inline; margin: 2px;">' + word + '</div>'
 }
 
@@ -53,7 +52,7 @@ export default function IssueLabelViewer(props) {
     const withBarChart = props.withBarChart ? props.withBarChart : true;
     const editable = props.editable ? props.editable : false;
 
-    const sortedResponses = props.xai_toolkit_response.sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 10)
+    const sortedResponses = [...props.xai_toolkit_response].sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 10)
     const labels = sortedResponses.map((word) => word[0]);
     const data = {
         labels,
@@ -87,10 +86,19 @@ export default function IssueLabelViewer(props) {
     const factor = 1 / max;
 
     if (clueMode) {
-        /** we have access to all the words in the issue in the response list itself. so we only need to append them */
-        text = props.xai_toolkit_response.map(([word, rating]) => getHTMLWrapper(word, rating, factor)).join(" ")
+        /** (SHAP) we have access to all the words in the issue in the response list itself. so we only need to append them */
+        text = props.xai_toolkit_response.map(([word, rating]) => {
+            console.log(word)
+            if (labels.includes(word)) {
+                return getHTMLWrapper(word, rating, factor)
+            }
+            else {
+                return word.replace(/[&<>]/g, replaceHTMLTags)
+            }
+        }).join(" ")
     } else {
-        /** 
+        /**
+         * (LIME) 
          * map the important words to ids, then replace them by the ids. this ensures that words like 'class',
          * which appear in the inserted html and the text corpus itself, are handled correctly. (overwritten or not).
          */
