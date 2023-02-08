@@ -52,7 +52,7 @@ export default function IssueLabelViewer(props) {
     const withBarChart = props.withBarChart ? props.withBarChart : true;
     const editable = props.editable ? props.editable : false;
 
-    const sortedResponses = [...props.xai_toolkit_response].sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 10)
+    const sortedResponses = [...props.xai_toolkit_response].filter(([word, _]) => word.trim().length > 2).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 10)
     const labels = sortedResponses.map((word) => word[0]);
     const data = {
         labels,
@@ -85,10 +85,11 @@ export default function IssueLabelViewer(props) {
     const max = Math.max(...props.xai_toolkit_response.map(([_, rating]) => Math.abs(rating)));
     const factor = 1 / max;
 
+    console.log(props);
+
     if (clueMode) {
         /** (SHAP) we have access to all the words in the issue in the response list itself. so we only need to append them */
         text = props.xai_toolkit_response.map(([word, rating]) => {
-            console.log(word)
             if (labels.includes(word)) {
                 return getHTMLWrapper(word, rating, factor)
             }
