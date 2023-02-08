@@ -39,7 +39,8 @@ class SHAPEvaluation:
 
         MODEL_PATH = 'backend/models/seBERT/'
 
-        model = transformers.BertForSequenceClassification.from_pretrained(MODEL_PATH, num_labels=2)
+        model = transformers.BertForSequenceClassification.from_pretrained(
+            MODEL_PATH, num_labels=2)
         tokenizer = transformers.BertTokenizer.from_pretrained(MODEL_PATH, truncation=True, max_length=128,
                                                                paddding=True)
 
@@ -52,13 +53,14 @@ class SHAPEvaluation:
         index = 0
         for issue in Issue.objects.all():
             index = index + 1
-            if XAICache.objects.filter(issue_id=issue.id,xai_algorithm="shap").exists():
+            if XAICache.objects.filter(issue_id=issue.id, xai_algorithm="shap").exists():
                 continue
             print("(" + str(index) + "/" + str(count) + ")")
             explainer = shap.Explainer(pipe)
             text = issue.title + " " + issue.description
             shap_values = explainer([text])[0]
-            values, clustering = self.unpack_shap_explanation_contents(shap_values[:, 0])
+            values, clustering = self.unpack_shap_explanation_contents(
+                shap_values[:, 1])
             tokens, values, group_sizes = self.process_shap_values(shap_values[:, 0].data, values, grouping_threshold,
                                                                    separator, clustering)
             result_array = []
@@ -91,8 +93,8 @@ class SHAPEvaluation:
 
             # make sure we were given a partition tree
             if clustering is None:
-                raise ValueError("The length of the attribution values must match the number of " + \
-                                 "tokens if shap_values.clustering is None! When passing hierarchical " + \
+                raise ValueError("The length of the attribution values must match the number of " +
+                                 "tokens if shap_values.clustering is None! When passing hierarchical " +
                                  "attributions the clustering is also required.")
 
             # compute the groups, lower_values, and max_values
@@ -105,8 +107,10 @@ class SHAPEvaluation:
                 li = int(clustering[i, 0])
                 ri = int(clustering[i, 1])
                 groups.append(groups[li] + groups[ri])
-                lower_values[M + i] = lower_values[li] + lower_values[ri] + values[M + i]
-                max_values[i + M] = max(abs(values[M + i]) / len(groups[M + i]), max_values[li], max_values[ri])
+                lower_values[M + i] = lower_values[li] + \
+                    lower_values[ri] + values[M + i]
+                max_values[i + M] = max(abs(values[M + i]) /
+                                        len(groups[M + i]), max_values[li], max_values[ri])
 
             # compute the upper_values
             upper_values = np.zeros(len(values))
@@ -178,7 +182,8 @@ class SHAPEvaluation:
                         merge_tokens(new_tokens, new_values, group_sizes, li)
                         merge_tokens(new_tokens, new_values, group_sizes, ri)
 
-            merge_tokens(new_tokens, new_values, group_sizes, len(group_values) - 1)
+            merge_tokens(new_tokens, new_values,
+                         group_sizes, len(group_values) - 1)
 
             # replance the incoming parameters with the grouped versions
             tokens = np.array(new_tokens)
@@ -206,7 +211,8 @@ class SHAPEvaluation:
         return json.loads(random_object.viewData), issue.title + " " + issue.description, self.class_names
 
     def get_shap(self, issue):
-        random_object = XAICache.objects.filter(issue_id=issue.id, xai_algorithm="shap").first()
+        random_object = XAICache.objects.filter(
+            issue_id=issue.id, xai_algorithm="shap").first()
         if random_object is None:
             return None
         return json.loads(random_object.viewData), issue.title + " " + issue.description, self.class_names
