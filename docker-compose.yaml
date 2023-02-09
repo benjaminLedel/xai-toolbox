@@ -1,10 +1,10 @@
-version: '2'
+version: "2"
 
 services:
   mariadb:
-    image: 'bitnami/mariadb:latest'
+    image: "bitnami/mariadb:latest"
     ports:
-      - '3306:3306'
+      - "3306:3306"
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
       - MARIADB_USER=xai_user
@@ -12,3 +12,11 @@ services:
       - MARIADB_DATABASE=xai_toolkit
     volumes:
       - ./:/data
+
+  nginx:
+    image: nginx:1.15-alpine
+    volumes:
+      - ./data/nginx:/etc/nginx/conf.d
+      - ./data/cert:/etc/cert
+      - ./frontend/build:/www/data
+    network_mode: host
