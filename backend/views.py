@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.utils.decorators import decorator_from_middleware
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import get_user_model
 
 from backend.lib.IssueRepository import IssueRepository
 from backend.lib.LIMEEvaluation import LIMEEvaluation
@@ -27,6 +28,23 @@ def me(request):
     if not current_user:
         return HttpResponse(json.dumps({}))
     return HttpResponse(json.dumps({"email": current_user.email, "id": current_user.id}))
+
+
+def get_progress(request):
+    progress = {}
+    total_rated = 0
+    for rating in Rating.objects.all():
+        username = rating.user.get_username()
+        if username not in progress:
+            progress[username] = 0
+        # one rating equals 0.5 issues rated
+        progress[username] += 0.5
+        total_rated += 0.5
+
+    progress['total_rated'] = total_rated
+    progress['total_unrated'] = Issue.objects.count() - total_rated
+
+    return HttpResponse(json.dumps(progress), content_type="application/json")
 
 
 def randomIssueWithoutLabeling(request):
@@ -84,10 +102,10 @@ def randomIssueWithoutLabelingSet(request):
     while issue is None:
         issue = Issue.objects.order_by('?')[0]
         # check if we have already labeled this issue
-        if Rating.objects.filter(issue_id=issue.id,user=current_user).exists():
+        if Rating.objects.filter(issue_id=issue.id, user=current_user).exists():
             issue = None
         # check if we have data for the issue
-        if not XAICache.objects.filter(issue_id=issue.id, xai_algorithm="lime").exists() or not XAICache.objects.filter(issue_id=issue.id,xai_algorithm="shap").exists():
+        if not XAICache.objects.filter(issue_id=issue.id, xai_algorithm="lime").exists() or not XAICache.objects.filter(issue_id=issue.id, xai_algorithm="shap").exists():
             issue = None
         if i > 100000000000:
             jsonResult = {

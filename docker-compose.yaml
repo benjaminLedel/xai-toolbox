@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  mariadb:
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - '3306:3306'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=xai_user
+      - MARIADB_PASSWORD=test123
+      - MARIADB_DATABASE=xai_toolkit
+    volumes:
+      - ./:/data

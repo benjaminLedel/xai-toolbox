@@ -10,11 +10,12 @@ let API_ISSUE_RANDOM_SHAP = "issue/random/shap";
 let API_LOGIN = "token/";
 let API_RATING_SAVE = "rating/create";
 let API_ME = "me/";
+let API_RATING_PROGRESS = "rating/progress";
 
 class AjaxHelperSingleton {
 
     _getAuthHeaderObj() {
-        return {'Authorization': "Bearer " + localStorage.getItem("auth_token")}
+        return { 'Authorization': "Bearer " + localStorage.getItem("auth_token") }
     }
 
     _get(endpoint, params = {}) {
@@ -22,11 +23,11 @@ class AjaxHelperSingleton {
             {
                 method: "GET",
                 headers:
-                    {
-                        'Accept': '*/*',
-                        'Content-Type': 'application/json',
-                        ...this._getAuthHeaderObj()
-                    },
+                {
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json',
+                    ...this._getAuthHeaderObj()
+                },
             })
             .then(resp => resp.json())
     }
@@ -35,59 +36,57 @@ class AjaxHelperSingleton {
         return fetch(BASE + endpoint,
             {
                 headers:
-                    {
-                        'Accept': '*/*',
-                        'Content-Type': 'application/json',
-                        ...this._getAuthHeaderObj()
-                    },
+                {
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json',
+                    ...this._getAuthHeaderObj()
+                },
                 method: "POST",
                 body: JSON.stringify(payload)
             })
             .then(resp => resp.json())
     }
 
-    getRandomIssue()
-    {
+    getRatingProgress() {
+        return this._get(API_RATING_PROGRESS)
+    }
+
+    getRandomIssue() {
         return this._get(API_ISSUE_RANDOM)
     }
 
-    getRandomIssueSet()
-    {
+    getRandomIssueSet() {
         return this._get(API_ISSUE_RANDOM_SET)
     }
 
-    saveRating(rating, issue)
-    {
-        return this._post(API_RATING_SAVE,{rating: rating, issue: issue})
+    saveRating(rating, issue) {
+        return this._post(API_RATING_SAVE, { rating: rating, issue: issue })
     }
 
 
-    getRandomIssueLime(bugType)
-    {
-        return this._get(API_ISSUE_RANDOM_LIME,{"bug_type": bugType})
+    getRandomIssueLime(bugType) {
+        return this._get(API_ISSUE_RANDOM_LIME, { "bug_type": bugType })
     }
 
-    getRandomIssueShap(bugType)
-    {
-        return this._get(API_ISSUE_RANDOM_SHAP,{"bug_type": bugType})
+    getRandomIssueShap(bugType) {
+        return this._get(API_ISSUE_RANDOM_SHAP, { "bug_type": bugType })
     }
 
-    login(email, password)
-    {
+    login(email, password) {
         return fetch(BASE + API_LOGIN,
             {
                 headers:
-                    {
-                        'Accept': '*/*',
-                        'Content-Type': 'application/json',
-                    },
+                {
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json',
+                },
                 method: "POST",
                 body: JSON.stringify({ username: email, password: password })
             })
             .then(resp => resp.json());
     }
 
-     logout() {
+    logout() {
     }
 
     me() {

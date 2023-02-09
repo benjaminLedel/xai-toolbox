@@ -5,7 +5,7 @@ __pycache__/
 bin
 /backend/models/seBERT/
 node_modules
-lib
-lib*
 share
+/lib
 *.cfg
+*.sql
