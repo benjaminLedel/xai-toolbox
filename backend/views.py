@@ -35,8 +35,8 @@ def get_progress(request):
         progress[username] += 0.5
         total_rated += 0.5
 
+    progress['total_unrated'] = Issue.objects.count() * len(progress.keys()) - total_rated
     progress['total_rated'] = total_rated
-    progress['total_unrated'] = Issue.objects.count() - total_rated
 
     return HttpResponse(json.dumps(progress), content_type="application/json")
 
@@ -84,11 +84,10 @@ def randomIssueWithoutLabelingSet(request):
     issue = None
 
     # number of issue that should be labeled
-    number_of_rating_users = 3
     total_number_of_issues = Issue.objects.count()
     number_of_issues_rated = Rating.objects.filter(
         user=current_user).count() / 2
-    if number_of_issues_rated >= (total_number_of_issues / number_of_rating_users):
+    if number_of_issues_rated >= total_number_of_issues:
         jsonResult = {
             "error": True,
             "title": "Great! You have labeled all data so far."
