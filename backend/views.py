@@ -2,20 +2,14 @@ import json
 import random
 
 from django.http import HttpResponse
-from django.http import JsonResponse
-from django.core.serializers import serialize
 from django.utils.decorators import decorator_from_middleware
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import get_user_model
 
 from backend.lib.IssueRepository import IssueRepository
 from backend.lib.LIMEEvaluation import LIMEEvaluation
 from backend.lib.SHAPEvaluation import SHAPEvaluation
-
-from rest_framework_simplejwt import authentication
-
 from backend.middleware import JWTMiddleware
-from backend.models import XAICache, Issue, Rating
+from backend.models import Issue, Rating, XAICache
 
 
 def index(request):
@@ -90,8 +84,11 @@ def randomIssueWithoutLabelingSet(request):
     issue = None
 
     # number of issue that should be labeled
-    number_of_issue = 100
-    if Rating.objects.filter(user=current_user).count() > number_of_issue:
+    number_of_rating_users = 3
+    total_number_of_issues = Issue.objects.count()
+    number_of_issues_rated = Rating.objects.filter(
+        user=current_user).count() / 2
+    if number_of_issues_rated >= (total_number_of_issues / number_of_rating_users):
         jsonResult = {
             "error": True,
             "title": "Great! You have labeled all data so far."
