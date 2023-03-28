@@ -94,22 +94,17 @@ def randomIssueWithoutLabelingSet(request):
         }
         return HttpResponse(json.dumps(jsonResult), content_type="application/json")
 
-    i = 0
-    while issue is None:
-        issue = Issue.objects.order_by('?')[0]
-        # check if we have already labeled this issue
-        if Rating.objects.filter(issue_id=issue.id, user=current_user).exists():
-            issue = None
-        # check if we have data for the issue
-        if not XAICache.objects.filter(issue_id=issue.id, xai_algorithm="lime").exists() or not XAICache.objects.filter(issue_id=issue.id, xai_algorithm="shap").exists():
-            issue = None
-        if i > 100000000000:
-            jsonResult = {
-                "error": True,
-                "title": "Try again"
-            }
-            return HttpResponse(json.dumps(jsonResult), content_type="application/json")
-        i = i + 1
+    issues_rated_by_user = [rating['issue_id'] for rating in Rating.objects.filter(
+        user_id=current_user).values('issue_id')]
+
+    issue = Issue.objects.exclude(id__in=issues_rated_by_user).order_by('?')[0]
+
+    if not XAICache.objects.filter(issue_id=issue.id, xai_algorithm="lime").exists() or not XAICache.objects.filter(issue_id=issue.id, xai_algorithm="shap").exists():
+        jsonResult = {
+            "error": True,
+            "title": f"Issue {issue.id} has not been cached."
+        }
+        return HttpResponse(json.dumps(jsonResult), content_type="application/json")
 
     issue_id = issue.id
     random_object = Issue.objects.filter(id=issue_id).first()
