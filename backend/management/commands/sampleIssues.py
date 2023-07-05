@@ -16,10 +16,10 @@ class Command(BaseCommand):
         samples = []
         for key in issues.keys():
             df = issues[key]
-            sample_bugs = df[df.classification == 1].sample(n = len(df) / 2)
+            sample_bugs = df[df.classification == 1].sample(frac = 0.1)
             sample_bugs['project'] = key
             samples.append(sample_bugs)
-            sample_non_bugs = df[df.classification == 0].sample(n = len(df) / 2)
+            sample_non_bugs = df[df.classification == 0].sample(frac = 0.1)
             sample_non_bugs['project'] = key
             samples.append(sample_non_bugs)
 
