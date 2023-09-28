@@ -7,5 +7,6 @@ bin
 node_modules
 share
 /lib
+/lib64
 *.cfg
 *.sql

@@ -1,13 +1,18 @@
 # xAI Toolbox
-The xAI Toolbox uses Django as a backend framework and React as a frontend framework. 
-The toolbox displays issues from software repositories of SmartSHARK 
 
-![Training process](images/snippet1.PNG?raw=true "Training process")
+The xAI Toolbox uses Django as a backend framework and React as a frontend framework.
+The toolbox displays issues from software repositories of SmartSHARK
+
+![UI](images/ui_example.png?raw=true "Screenshot of the user interface")
 
 ## Local development
+
 The following guide will help you to set up the project on your local device.
+
 ### Requirements
+
 Requirements and how to get them with Ubuntu 20.04 LTS.
+
 #### Python 3.9
 
 ```bash
@@ -19,6 +24,7 @@ sudo apt-get install python3.9-venv
 ```
 
 #### NPM
+
 ```bash
 cd ~
 sudo apt upate
@@ -28,8 +34,9 @@ sudo apt install nodejs npm
 ### Installation
 
 #### Installation Backend
-The backend assumes that a MySQL database is already existing for xAI Toolkit (can be empty).
-If that is not the case create a database with your favorite tool before running migrate. Otherwise, you can use the SQLite database  (not recommended).
+
+- The backend assumes that a MySQL database is already existing for xAI Toolkit (can be empty). If that is not the case, create a database with your favorite tool before running migrate. Otherwise, you can use the SQLite database (not recommended).
+- Download the model from [here](https://smartshark2.informatik.uni-goettingen.de/sebert/issue_type_model.tar) and place it in the folder `backend/models`
 
 ```bash
 sudo apt-get install libmysqlclient-dev
@@ -47,6 +54,7 @@ python manage.py createsuperuser
 ```
 
 #### Installation Frontend
+
 ```bash
 cd /srv/www/xaitoolkit/frontend
 # install dependencies
@@ -57,13 +65,15 @@ npm run build
 ### Development
 
 run backend in dev mode
+
 ```bash
 cd /srv/www/xaitoolkit
 source bin/activate
-python manage runserver
+python manage.py runserver
 ```
 
 run frontend in dev mode
+
 ```bash
 cd /srv/www/xaitoolkit/frontend
 npm run start

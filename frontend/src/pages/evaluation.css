@@ -14,3 +14,16 @@
     width: 50%;
     margin: 5px;
 }
+
+.intro-table {
+    
+    margin-top: 20px;
+    
+    .category {
+        width: 15%;
+    }
+}
+
+.intro-table table, .intro-table th, .intro-table td {
+    border: 1px solid black;
+}
